@@ -11,7 +11,14 @@
         "projectId": "bdb12e27-5e01-482c-abf4-0d57696104ac"
       }
     },
-    "owner": "z84"
-  },
-  "name": "Shazalcohol"
+    "owner": "z84",
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+        }
+      ]
+    ]
+  }
 }
