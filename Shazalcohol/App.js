@@ -1,44 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import * as Permissions from 'expo-permissions';
+import 'react-native-gesture-handler';
+import React from 'react';
+import HomePage from "./components/HomePage";
+import ConnexionPage from "./components/ConnexionPage";
+import WineList from "./components/WineList";
+import WineScreen from "./components/WineScreen";
+import Scanner from "./components/Scanner";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import TestRequest from "./components/TestRequest";
+const Stack = createStackNavigator();
 
-export default function App() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-
-  useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA);
-      setHasPermission(status === 'granted');
-    };
-
-    getBarCodeScannerPermissions();
-  }, []);
-
-  const handleBarCodeScanned = ({ type, data }) => {
-    console.log(`Bar code with type ${type} and data ${data} has been scanned!`)
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
-
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  return (
-      <View style={styles.container}>
-        <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-        />
-        {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-      </View>
-  );
+class App extends React.Component {
+    render() {
+        return (
+            <NavigationContainer>
+                <Stack.Navigator>
+                    <Stack.Screen
+                        name="HomePage"
+                        component={HomePage}
+                    />
+                    <Stack.Screen
+                        name="ConnexionPage"
+                        component={ConnexionPage}
+                    />
+                    <Stack.Screen
+                        name="Scanner"
+                        component={Scanner}
+                    />
+                    <Stack.Screen
+                        name="WineList"
+                        component={WineList}
+                    />
+                    <Stack.Screen
+                        name="WineScreen"
+                        component={WineScreen}
+                    />
+                    <Stack.Screen
+                        name="TestRequest"
+                        component={TestRequest}
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+        );
+    }
 }
 
-const styles = StyleSheet.create({});
-
+export default App;
