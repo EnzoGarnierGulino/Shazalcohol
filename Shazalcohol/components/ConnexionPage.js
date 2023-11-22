@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import { Button, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+const SHA256 = require("crypto-js/sha256");
 
 class ConnexionPage extends React.Component {
     constructor(props) {
@@ -10,12 +11,39 @@ class ConnexionPage extends React.Component {
         };
     }
 
+    sendAccountConnexionRequest = async url => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/login', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: this.state.username,
+                    password: SHA256(this.state.password).toString(),
+                }),
+            });
+            if (response.ok) {
+                alert('You successfully logged in, congrats !');
+                const responseData = await response.json();
+                const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
+                await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted});
+            } else {
+                alert('Account connexion failed (Error code :' + response.status + '\nReason: ' + response.statusText +
+                    '\nPlease try again.');
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     render() {
         return (
             <View style={styles.container}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Username"
+                    placeholder="Username or email address"
                     onChangeText={(username) => this.setState({ username })}
                     value={this.state.username}
                 />
@@ -30,32 +58,23 @@ class ConnexionPage extends React.Component {
                     style={styles.button}
                     title="Connexion"
                     onPress={() => {
-                        console.log('Username:', this.state.username);
-                        console.log('Password:', this.state.password);
+                        this.sendAccountConnexionRequest();
                     }}
                 />
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('CreateAccountPage') }}>
+                    <Text style={styles.createAccountText}>Don't have an account? Click here</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        resizeMode: 'cover',
-        justifyContent: 'center',
-    },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0)',
-    },
-    text: {
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
-        color: '#000',
     },
     input: {
         height: 40,
@@ -66,8 +85,9 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         backgroundColor: 'white',
     },
-    button: {
-        marginBottom: 10,
+    createAccountText: {
+        marginTop: 10,
+        color: 'blue', // You can adjust the color
     },
 });
 

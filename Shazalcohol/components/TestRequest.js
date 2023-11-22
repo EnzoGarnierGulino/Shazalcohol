@@ -6,7 +6,7 @@ function TestRequest() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('http://192.168.1.75:8080/');
+            const response = await fetch('http://82.66.48.233:42690/');
             const data = await response.text();
             setResponse(data);
         } catch (error) {
