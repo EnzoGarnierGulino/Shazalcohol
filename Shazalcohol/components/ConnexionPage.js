@@ -25,10 +25,14 @@ class ConnexionPage extends React.Component {
                 }),
             });
             if (response.ok) {
-                alert('You successfully logged in, congrats !');
                 const responseData = await response.json();
-                const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
-                await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted});
+                if (responseData.response === "true") {
+                    alert('You successfully logged in, congrats !');
+                    const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
+                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted});
+                } else {
+                        alert("Account connexion failed\nReason: Wrong username or password");
+                }
             } else {
                 alert('Account connexion failed (Error code :' + response.status + '\nReason: ' + response.statusText +
                     '\nPlease try again.');
