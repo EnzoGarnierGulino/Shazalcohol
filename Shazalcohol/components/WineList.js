@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { Card } from 'react-native-elements';
 
 class WineList extends React.Component {
@@ -50,7 +50,7 @@ class WineList extends React.Component {
         ) : null;
 
         return (
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
                 {this.props.route.params.isAdmin && (
                     <View>
                         <Button
@@ -61,17 +61,18 @@ class WineList extends React.Component {
                 )}
                 <View style={{ marginBottom: 10 }} />
                 {wineCards}
-            </View>
+            </ScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
+        padding: 10,
     },
     text: {
         fontSize: 20,
