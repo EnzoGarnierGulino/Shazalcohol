@@ -6,7 +6,7 @@ import {useFocusEffect} from "@react-navigation/native";
 function Scanner(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(props.route.params.isAdmin);
+    const isAdmin = props.route.params.isAdmin;
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -35,9 +35,7 @@ function Scanner(props) {
                         name: responseData.name,
                         year: responseData.year
                     }
-
                     await props.navigation.navigate('WineScreen', {wine: wine, isAdmin: isAdmin});
-
                 }
                 else {
                     alert('This wine is not in the database!');
@@ -61,7 +59,7 @@ function Scanner(props) {
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
             />
-            {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+            {scanned && <Button style={StyleSheet.button} title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
         </View>
     );
 }
@@ -74,4 +72,9 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
     },
+    button: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        marginBottom: 36
+    }
 });
