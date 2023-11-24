@@ -44,7 +44,7 @@ class AddWine extends React.Component {
             });
             if (response.ok) {
                 alert('Wine successfully added!');
-                await this.props.navigation.navigate('WineList');
+                await this.props.navigation.navigate('WineList', {isAdmin: true});
             } else {
                 const responseData = await response.json();
                 const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';

@@ -55,7 +55,7 @@ class WineScreen extends React.Component {
             });
             if (response.ok) {
                 alert('Wine successfully modified!');
-                await this.props.navigation.navigate('WineList');
+                await this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin});
             } else {
                 const responseData = await response.json();
                 const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';

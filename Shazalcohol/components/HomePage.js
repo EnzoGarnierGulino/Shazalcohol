@@ -38,10 +38,6 @@ class HomePage extends React.Component {
                 <View style={{ marginBottom: 10 }} />
                     {this.state.isAdmin ? (
                         <View>
-                            <Button
-                                title="Test the server"
-                                onPress={() => this.props.navigation.navigate('TestRequest')}
-                            />
                             <View style={{ marginBottom: 10 }} />
                             <Button
                                 title="Switch to user mode"
