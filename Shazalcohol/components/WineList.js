@@ -33,13 +33,17 @@ class WineList extends React.Component {
         }
     }
 
-    render() {
+    render(url) {
         const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
             this.state.wines.map((wine, index) => (
                 <View key={index} style={{ width: '90%' }}>
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('WineScreen', { wine })}>
-                        <Card>
+                        onPress={() => this.props.navigation.navigate('WineScreen', {
+                            wine: wine,
+                            isAdmin: this.props.route.params.isAdmin
+                        })}>
+
+                    <Card>
                             <Card.Title>{wine.name + ' (' + wine.year + ')'}</Card.Title>
                             <Card.Divider />
                             <Text>{wine.type}</Text>

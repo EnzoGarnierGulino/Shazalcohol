@@ -1,11 +1,16 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 
 class WineScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isAdmin: this.props.route.params.isAdmin,
             wines: [],
+            name: '',
+            year: '',
+            origin: '',
+            price: '',
         };
     }
 
@@ -38,15 +43,40 @@ class WineScreen extends React.Component {
             <View>
                 {wine && (
                     <React.Fragment>
-                        <Text>{this.props.route.params.wine.name}</Text>
-                        <Text>{this.props.route.params.wine.year}</Text>
-                        <Text>{wine.origin}</Text>
-                        <Text>{wine.price}€</Text>
+                        {this.state.isAdmin ? (
+                            <React.Fragment>
+                                <TextInput
+                                    style={styles.input}
+                                >{this.props.route.params.wine.name}</TextInput>
+                                <TextInput>{this.props.route.params.wine.year}</TextInput>
+                                <TextInput>{wine.origin}</TextInput>
+                                <TextInput>{wine.price}€</TextInput>
+                            </React.Fragment>
+                        ) : (
+                            <React.Fragment>
+                                <Text>{this.props.route.params.wine.name}</Text>
+                                <Text>{this.props.route.params.wine.year}</Text>
+                                <Text>{wine.origin}</Text>
+                                <Text>{wine.price}€</Text>
+                            </React.Fragment>
+                        )}
                     </React.Fragment>
                 )}
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    input: {
+        height: 40,
+        width: '80%',
+        borderColor: 'grey',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingLeft: 10,
+        backgroundColor: 'white',
+    },
+});
 
 export default WineScreen;
