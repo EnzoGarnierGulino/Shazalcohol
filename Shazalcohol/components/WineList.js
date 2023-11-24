@@ -7,6 +7,8 @@ class WineList extends React.Component {
         super(props);
         this.state = {
             wines: [],
+            offset: 0,
+            winesPerPage: 5,
         };
     }
 
@@ -16,7 +18,7 @@ class WineList extends React.Component {
 
     fetchWines = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=0&winesPerPage=10', {
+            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' + this.state.offset + '&winesPerPage=' + this.state.winesPerPage, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -33,7 +35,29 @@ class WineList extends React.Component {
         }
     }
 
-    render(url) {
+    previousPage = () => {
+        if (this.state.offset === 0) {
+            return;
+        }
+        else {
+            this.setState({ offset: this.state.offset - this.state.winesPerPage }, () => {
+                this.fetchWines();
+            });
+        }
+    }
+
+    nextPage = () => {
+        if (this.state.wines.length < this.state.winesPerPage) {
+            return;
+        }
+        else {
+            this.setState({ offset: this.state.offset + this.state.winesPerPage }, () => {
+                this.fetchWines();
+            });
+        }
+    }
+
+    render() {
         const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
             this.state.wines.map((wine, index) => (
                 <View key={index} style={{ width: '90%' }}>
@@ -54,18 +78,36 @@ class WineList extends React.Component {
         ) : null;
 
         return (
-            <ScrollView contentContainerStyle={styles.container}>
-                {this.props.route.params.isAdmin && (
-                    <View>
-                        <Button
-                            title="Add a wine"
-                            onPress={() => this.props.navigation.navigate('AddWine')}
-                        />
-                    </View>
-                )}
-                <View style={{ marginBottom: 10 }} />
-                {wineCards}
-            </ScrollView>
+            <View style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={styles.container}>
+                    {this.props.route.params.isAdmin && (
+                        <View>
+                            <Button
+                                title="Add a wine"
+                                onPress={() => this.props.navigation.navigate('AddWine')}
+                            />
+                        </View>
+                    )}
+                    <View style={{ marginBottom: 10 }} />
+                    {wineCards}
+                </ScrollView>
+                <View style={styles.bottomBar}>
+                    <Button
+                        title="Previous"
+                        onPress={() => {
+                            this.previousPage();
+                        }
+                        }
+                    />
+                    <Button
+                        title="Next"
+                        onPress={() => {
+                            this.nextPage();
+                        }
+                        }
+                    />
+                </View>
+            </View>
         );
     }
 }
@@ -77,6 +119,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         padding: 10,
+    },
+    bottomBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: '#eee',
+        paddingVertical: 10,
     },
     text: {
         fontSize: 20,
