@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import {BarCodeScanner} from "expo-barcode-scanner";
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -12,7 +13,16 @@ class AddWine extends React.Component {
             origin: '',
             price: '',
             barcode: '',
+            scanned: false,
         };
+    }
+
+    componentDidMount() {
+        const getBarCodeScannerPermissions = async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        };
+        getBarCodeScannerPermissions();
     }
 
     sendWineAdditionRequest = async () => {
@@ -59,66 +69,70 @@ class AddWine extends React.Component {
             alert('Year must be 4 digits long');
             return false;
         }
-        if (this.state.barcode.length < 11) {
-            alert('Barcode is too short');
-            return false;
-        }
         return true;
+    };
+
+    handleBarCodeScanned = ({ type, data }) => {
+        this.setState({ scanned: true });
+        this.setState({ barcode: data });
     };
 
     render() {
         return (
             <View style={styles.container}>
-                <Picker
-                    style={{ height: 50, width: 150, borderColor: 'grey', borderWidth: 1 }}
-                    itemStyle={{ color: "black"}}
-                    selectedValue={this.state.type}
-                    onValueChange={(itemValue, itemIndex) =>
-                        this.setState({ type: itemValue })
-                    }>
-                    <Picker.Item label="Red" value="Red" />
-                    <Picker.Item label="White" value="White" />
-                    <Picker.Item label="Rose" value="Rose" />
-                </Picker>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Name"
-                    secureTextEntry={true}
-                    onChangeText={(name) => this.setState({ name })}
-                    value={this.state.name}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Year"
-                    secureTextEntry={true}
-                    onChangeText={(year) => this.setState({ year })}
-                    value={this.state.year}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Origin"
-                    onChangeText={(origin) => this.setState({ origin })}
-                    value={this.state.origin}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Price (€)"
-                    onChangeText={(price) => this.setState({ price })}
-                    value={this.state.price}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Barcode"
-                    onChangeText={(barcode) => this.setState({ barcode })}
-                    value={this.state.barcode}
-                />
-                <Button
-                    style={styles.button}
-                    title="Add a wine"
-                    onPress={() => {
-                        this.validateWineAddition() ? this.sendWineAdditionRequest() : null
-                    }}
-                />
+                {!this.state.scanned ? (
+                    <BarCodeScanner
+                    onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned}
+                    style={StyleSheet.absoluteFillObject}
+                    />
+                ) : (
+                    <>
+                        <Picker
+                            style={{ height: 50, width: 150, borderColor: 'grey', borderWidth: 1 }}
+                            itemStyle={{ color: "black"}}
+                            selectedValue={this.state.type}
+                            onValueChange={(itemValue, itemIndex) =>
+                                this.setState({ type: itemValue })
+                            }>
+                            <Picker.Item label="Red" value="Red" />
+                            <Picker.Item label="White" value="White" />
+                            <Picker.Item label="Rose" value="Rose" />
+                        </Picker>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Name"
+                            onChangeText={(name) => this.setState({ name })}
+                            value={this.state.name}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Year"
+                            onChangeText={(year) => this.setState({ year })}
+                            value={this.state.year}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Origin"
+                            onChangeText={(origin) => this.setState({ origin })}
+                            value={this.state.origin}
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Price (€)"
+                            onChangeText={(price) => this.setState({ price })}
+                            value={this.state.price}
+                        />
+                        <Button
+                            style={styles.button}
+                            title="Add a wine"
+                            onPress={() => {
+                                this.validateWineAddition() ? this.sendWineAdditionRequest() : null
+                            }}
+                        />
+                    </>
+                )}
+
+
             </View>
         );
     }
