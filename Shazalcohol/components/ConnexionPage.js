@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     },
     createAccountText: {
         marginTop: 10,
-        color: 'blue', // You can adjust the color
+        color: 'blue',
     },
 });
 
