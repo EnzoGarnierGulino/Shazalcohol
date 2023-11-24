@@ -25,7 +25,7 @@ class HomePage extends React.Component {
                 <Button
                     title="Take a picture"
                     onPress={() =>
-                        this.props.navigation.navigate('Scanner')
+                        this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin})
                     }
                 />
                 <View style={{ marginBottom: 10 }} />
