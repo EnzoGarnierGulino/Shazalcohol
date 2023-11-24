@@ -1,21 +1,59 @@
-import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import HomePage from "./components/HomePage";
+import ConnexionPage from "./components/ConnexionPage";
+import WineList from "./components/WineList";
+import WineScreen from "./components/WineScreen";
+import AddWine from "./components/AddWine";
+import CreateAccountPage from "./components/CreateAccountPage";
+import Scanner from "./components/Scanner";
+import TestRequest from "./components/TestRequest";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello world</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const Stack = createStackNavigator();
+
+class App extends React.Component {
+    render() {
+        return (
+            <NavigationContainer>
+                <Stack.Navigator>
+                    <Stack.Screen
+                        name="HomePage"
+                        component={HomePage}
+                    />
+                    <Stack.Screen
+                        name="ConnexionPage"
+                        component={ConnexionPage}
+                    />
+                    <Stack.Screen
+                        name="CreateAccountPage"
+                        component={CreateAccountPage}
+                    />
+                    <Stack.Screen
+                        name="Scanner"
+                        component={Scanner}
+                    />
+                    <Stack.Screen
+                        name="AddWine"
+                        component={AddWine}
+                    />
+                    <Stack.Screen
+                        name="WineList"
+                        component={WineList}
+                    />
+                    <Stack.Screen
+                        name="WineScreen"
+                        component={WineScreen}
+                    />
+                    <Stack.Screen
+                        name="TestRequest"
+                        component={TestRequest}
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+        );
+    }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffe2e2',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

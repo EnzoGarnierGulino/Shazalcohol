@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Shazalcohol",
+    "slug": "Shazalcohol",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bdb12e27-5e01-482c-abf4-0d57696104ac"
+      }
+    },
+    "owner": "z84",
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+        }
+      ]
+    ]
+  }
+}
