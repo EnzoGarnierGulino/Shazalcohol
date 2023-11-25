@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {Icon} from "react-native-elements";
 
 class WineScreen extends React.Component {
     constructor(props) {
@@ -93,9 +94,12 @@ class WineScreen extends React.Component {
                                 value={this.state.price}
                                 onChangeText={(price) => this.setState({price: price})}
                             />
-                            <Button
-                                title="Edit wine"
-                                onPress={() => this.sendModifiedWine()}/>
+                            <TouchableOpacity style={styles.button} onPress={() => this.sendModifiedWine()}>
+                                <View style={styles.buttonContainer}>
+                                    <Icon name={"edit"} color="white" size={20} style={styles.icon}/>
+                                    <Text style={styles.buttonText}>Edit wine</Text>
+                                </View>
+                            </TouchableOpacity>
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
@@ -107,7 +111,8 @@ class WineScreen extends React.Component {
                     )}
                 </React.Fragment>
             </View>
-        );
+        )
+            ;
     }
 }
 
@@ -120,6 +125,25 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingLeft: 10,
         backgroundColor: 'white',
+    },
+    button: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 90,
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
