@@ -29,6 +29,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-picker": "^4.3.7",
     "react-native-sha256": "^1.4.9",
+    "react-native-vector-icons": "^10.0.2",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {

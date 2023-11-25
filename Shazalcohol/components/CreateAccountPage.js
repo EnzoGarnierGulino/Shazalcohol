@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import {StyleSheet, View, Button, TextInput, Text, TouchableOpacity} from 'react-native';
+import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
 
 class CreateAccountPage extends React.Component {
@@ -108,13 +109,14 @@ class CreateAccountPage extends React.Component {
                     onChangeText={(mail) => this.setState({ mail })}
                     value={this.state.mail}
                 />
-                <Button
-                    style={styles.button}
-                    title="Create your account"
-                    onPress={() => {
-                        this.validateAccountCreation() ? this.sendAccountCreationRequest() : null
-                    }}
-                />
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    this.validateAccountCreation() ? this.sendAccountCreationRequest() : null
+                }}>
+                    <View style={styles.buttonContainer}>
+                        <Icon name={"new-releases"} color="white" size={20} style={styles.icon}/>
+                        <Text style={styles.buttonText}>Create your account</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -148,7 +150,23 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     button: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
         marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 200,
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 

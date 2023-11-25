@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
-import { Card } from 'react-native-elements';
+import {StyleSheet, Text, View, Button, TouchableOpacity, ScrollView} from 'react-native';
+import {Card, Icon} from 'react-native-elements';
 
 class WineList extends React.Component {
     constructor(props) {
@@ -28,7 +28,7 @@ class WineList extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
-                this.setState({ wines: bodyData.wines });
+                this.setState({wines: bodyData.wines});
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -38,9 +38,8 @@ class WineList extends React.Component {
     previousPage = () => {
         if (this.state.offset === 0) {
             return;
-        }
-        else {
-            this.setState({ offset: this.state.offset - this.state.winesPerPage }, () => {
+        } else {
+            this.setState({offset: this.state.offset - this.state.winesPerPage}, () => {
                 this.fetchWines();
             });
         }
@@ -49,9 +48,8 @@ class WineList extends React.Component {
     nextPage = () => {
         if (this.state.wines.length < this.state.winesPerPage) {
             return;
-        }
-        else {
-            this.setState({ offset: this.state.offset + this.state.winesPerPage }, () => {
+        } else {
+            this.setState({offset: this.state.offset + this.state.winesPerPage}, () => {
                 this.fetchWines();
             });
         }
@@ -60,16 +58,16 @@ class WineList extends React.Component {
     render() {
         const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
             this.state.wines.map((wine, index) => (
-                <View key={index} style={{ width: '90%' }}>
+                <View key={index} style={{width: '90%'}}>
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('WineScreen', {
                             wine: wine,
                             isAdmin: this.props.route.params.isAdmin
                         })}>
 
-                    <Card>
+                        <Card>
                             <Card.Title>{wine.name + ' (' + wine.year + ')'}</Card.Title>
-                            <Card.Divider />
+                            <Card.Divider/>
                             <Text>{wine.type}</Text>
                         </Card>
                     </TouchableOpacity>
@@ -78,34 +76,38 @@ class WineList extends React.Component {
         ) : null;
 
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{flex: 1}}>
                 <ScrollView contentContainerStyle={styles.container}>
                     {this.props.route.params.isAdmin && (
                         <View>
-                            <Button
-                                title="Add a wine"
-                                onPress={() => this.props.navigation.navigate('AddWine')}
-                            />
+                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine')}>
+                                <View style={styles.buttonContainer}>
+                                    <Icon name={"add"} color="white" size={20} style={styles.icon}/>
+                                    <Text style={styles.buttonText}>Add a wine</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     )}
-                    <View style={{ marginBottom: 10 }} />
+                    <View style={{marginBottom: 10}}/>
                     {wineCards}
                 </ScrollView>
                 <View style={styles.bottomBar}>
-                    <Button
-                        title="Previous"
-                        onPress={() => {
-                            this.previousPage();
-                        }
-                        }
-                    />
-                    <Button
-                        title="Next"
-                        onPress={() => {
-                            this.nextPage();
-                        }
-                        }
-                    />
+                    <TouchableOpacity style={styles.button} onPress={() => {
+                        this.previousPage();
+                    }}>
+                        <View style={styles.buttonContainer}>
+                            <Icon name={"navigate-before"} color="white" size={20} style={styles.icon}/>
+                            <Text style={styles.buttonText}>Previous</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => {
+                        this.nextPage();
+                    }}>
+                        <View style={styles.buttonContainer}>
+                            <Icon name={"navigate-next"} color="white" size={20} style={styles.icon}/>
+                            <Text style={styles.buttonText}>Next</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -130,6 +132,25 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         textAlign: 'center',
+    },
+    button: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 100,
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
