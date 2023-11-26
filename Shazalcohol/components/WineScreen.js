@@ -1,6 +1,7 @@
 import React from 'react';
 import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import {Icon} from "react-native-elements";
+import Comment from "./Comment";
 
 class WineScreen extends React.Component {
     constructor(props) {
@@ -40,6 +41,30 @@ class WineScreen extends React.Component {
     }
 
     sendModifiedWine = async () => {
+        if (this.state.name === '' || this.state.year === '' || this.state.origin === '' || this.state.price === '') {
+            alert('Please fill all the fields');
+            return false;
+        }
+        if (isNaN(this.state.year) || isNaN(this.state.price)) {
+            alert('Year and price must be numbers');
+            return false;
+        }
+        if (this.state.year < 0 || this.state.price < 0) {
+            alert('Year and price must be positive');
+            return false;
+        }
+        if (this.state.name > 50 || this.state.origin > 50) {
+            alert('Name and origin must be less than 50 characters long');
+            return false;
+        }
+        if (this.state.year < 1800 || this.state.year > 2023) {
+            alert('Year must be between 1800 and 2023');
+            return false;
+        }
+        if (this.state.price > 1000000) {
+            alert('Price must be less than 1 million');
+            return false;
+        }
         try {
             const response = await fetch('http://82.66.48.233:42690/editWine', {
                 method: 'PUT',
@@ -120,16 +145,20 @@ class WineScreen extends React.Component {
                         <React.Fragment>
                             <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
                             <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin}</Text>
-                            {/*<Image style={styles.img} source={require('../images/Wine1.png')}></Image>*/}
+                            <Image style={styles.img} source={require('../images/Wine1.png')}></Image>
                             <Text style={styles.text}>{this.state.price}€</Text>
                             <View style={{marginBottom: 20}}/>
                             <View style={styles.container}>
-                                <View style={[styles.circle, { backgroundColor: this.getCircleColor(16) }]} />
-                                <Text style={styles.review}>16</Text>
+                                <View style={[styles.circle, { backgroundColor: this.getCircleColor(8) }]} />
+                                <Text style={styles.review}>8</Text>
                             </View>
                         </React.Fragment>
                     )}
                 </React.Fragment>
+                <View style={{marginBottom: 20}}/>
+                {/* TODO: Scrollable view */}
+                <Comment author={"Jules"} text={"A chier"} date={"25/11/2023, 10:28"} />
+                <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
             </View>
         );
     }

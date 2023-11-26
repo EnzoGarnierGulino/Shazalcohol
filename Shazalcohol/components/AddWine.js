@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, TextInput, Button } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import {StyleSheet, View, TextInput, Text, TouchableOpacity} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import {BarCodeScanner} from "expo-barcode-scanner";
+import {Icon} from "react-native-elements";
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -15,14 +16,6 @@ class AddWine extends React.Component {
             barcode: '',
             scanned: false,
         };
-    }
-
-    componentDidMount() {
-        const getBarCodeScannerPermissions = async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
-            setHasPermission(status === 'granted');
-        };
-        getBarCodeScannerPermissions();
     }
 
     sendWineAdditionRequest = async () => {
@@ -122,17 +115,16 @@ class AddWine extends React.Component {
                             onChangeText={(price) => this.setState({ price })}
                             value={this.state.price}
                         />
-                        <Button
-                            style={styles.button}
-                            title="Add a wine"
-                            onPress={() => {
-                                this.validateWineAddition() ? this.sendWineAdditionRequest() : null
-                            }}
-                        />
+                        <TouchableOpacity style={styles.button} onPress={() => {
+                            this.validateWineAddition() ? this.sendWineAdditionRequest() : null
+                        }}>
+                            <View style={styles.buttonContainer}>
+                                <Icon name={"add"} color="white" size={20} style={styles.icon}/>
+                                <Text style={styles.buttonText}>Add a wine</Text>
+                            </View>
+                        </TouchableOpacity>
                     </>
                 )}
-
-
             </View>
         );
     }
@@ -157,6 +149,25 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         textAlign: 'center',
+    },
+    button: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 100,
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
