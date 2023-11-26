@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import {Icon} from "react-native-elements";
 
 class WineScreen extends React.Component {
@@ -9,6 +9,7 @@ class WineScreen extends React.Component {
             isAdmin: this.props.route.params.isAdmin,
             name: this.props.route.params.wine.name,
             year: this.props.route.params.wine.year,
+            type: this.props.route.params.wine.type,
         };
     }
 
@@ -67,6 +68,20 @@ class WineScreen extends React.Component {
         }
     };
 
+    getCircleColor(note) {
+        if (note < 5) {
+            return 'red';
+        }
+        if (note < 10) {
+            return 'orange';
+        }
+        if (note < 15) {
+            return '#FFD700';
+        }
+        else {
+            return '#1d9a1d';
+        }
+    }
 
     render() {
         return (
@@ -103,39 +118,46 @@ class WineScreen extends React.Component {
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
-                            <Text>{this.state.name}</Text>
-                            <Text>{this.state.year}</Text>
-                            <Text>{this.state.origin}</Text>
-                            <Text>{this.state.price}€</Text>
+                            <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
+                            <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin}</Text>
+                            {/*<Image style={styles.img} source={require('../images/Wine1.png')}></Image>*/}
+                            <Text style={styles.text}>{this.state.price}€</Text>
+                            <View style={{marginBottom: 20}}/>
+                            <View style={styles.container}>
+                                <View style={[styles.circle, { backgroundColor: this.getCircleColor(16) }]} />
+                                <Text style={styles.review}>16</Text>
+                            </View>
                         </React.Fragment>
                     )}
                 </React.Fragment>
             </View>
-        )
-            ;
+        );
     }
 }
 
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        width: '80%',
+        width: '60%',
         borderColor: 'grey',
         borderWidth: 1,
         marginBottom: 10,
         paddingLeft: 10,
         backgroundColor: 'white',
+        alignSelf: 'center',
     },
     button: {
+        width: '50%',
         backgroundColor: 'black',
         padding: 10,
         borderRadius: 10,
         marginBottom: 10,
+        alignSelf: 'center',
     },
     buttonContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: 90,
+        width: 100,
         justifyContent: 'center',
     },
     icon: {
@@ -145,6 +167,31 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
+    text: {
+        fontSize: 20,
+        textAlign: 'center',
+    },
+    textTitle: {
+        fontSize: 30,
+        textAlign: 'center',
+    },
+    review: {
+        fontSize: 40,
+        textAlign: 'center',
+        color: 'white',
+    },
+    circle: {
+        width: 50,
+        height: 50,
+        borderRadius: 8,
+        position: 'absolute',
+        alignSelf: 'center',
+    },
+    img: {
+        width: 200,
+        height: 200,
+        alignSelf: 'center',
+    }
 });
 
 export default WineScreen;
