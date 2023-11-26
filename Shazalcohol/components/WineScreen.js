@@ -148,6 +148,8 @@ class WineScreen extends React.Component {
                             <Image style={styles.img} source={require('../images/Wine1.png')}></Image>
                             <Text style={styles.text}>{this.state.price}€</Text>
                             <View style={{marginBottom: 20}}/>
+                            <Text style={styles.text}>Average user rating</Text>
+                            <View style={{marginBottom: 5}}/>
                             <View style={styles.container}>
                                 <View style={[styles.circle, { backgroundColor: this.getCircleColor(8) }]} />
                                 <Text style={styles.review}>8</Text>
@@ -157,7 +159,7 @@ class WineScreen extends React.Component {
                 </React.Fragment>
                 <View style={{marginBottom: 20}}/>
                 {/* TODO: Scrollable view */}
-                <Comment author={"Jules"} text={"A chier"} date={"25/11/2023, 10:28"} />
+                <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"} />
                 <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
             </View>
         );

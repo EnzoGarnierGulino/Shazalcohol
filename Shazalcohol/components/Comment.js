@@ -9,6 +9,7 @@ const Comment = ({ author, text, date }) => {
                 <Text style={styles.date}>{date}</Text>
             </View>
             <Text style={styles.text}>{text}</Text>
+            <Text style={styles.text}>Note : 5/20</Text>
         </View>
     );
 };
