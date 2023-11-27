@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, View, TextInput, Text, TouchableOpacity} from 'react-native';
+import {Button, Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {BarCodeScanner} from "expo-barcode-scanner";
 import {Icon} from "react-native-elements";
+import {launchImageLibraryAsync} from "expo-image-picker";
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -15,8 +16,31 @@ class AddWine extends React.Component {
             price: '',
             barcode: '',
             scanned: false,
+            selectedImage: null,
         };
     }
+
+    openImagePicker = async () => {
+        console.log('Opening image picker...')
+        const options = {
+            mediaType: 'photo',
+            includeBase64: false,
+            maxHeight: 2000,
+            maxWidth: 2000,
+        };
+
+        try {
+            const response = await launchImageLibraryAsync(options);
+            if (response.canceled) {
+                console.log('User cancelled image picker');
+            } else {
+                this.setState({ selectedImage: response.assets[0].uri });
+                console.log('Image selected: ', response.assets[0].uri)
+            }
+        } catch (error) {
+            console.log('Error selecting image: ', error);
+        }
+    };
 
     sendWineAdditionRequest = async () => {
         try {
@@ -75,8 +99,8 @@ class AddWine extends React.Component {
             <View style={styles.container}>
                 {!this.state.scanned ? (
                     <BarCodeScanner
-                    onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned}
-                    style={StyleSheet.absoluteFillObject}
+                        onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned}
+                        style={StyleSheet.absoluteFillObject}
                     />
                 ) : (
                     <>
@@ -115,6 +139,7 @@ class AddWine extends React.Component {
                             onChangeText={(price) => this.setState({ price })}
                             value={this.state.price}
                         />
+                        <Button title="Choose from Device" onPress={this.openImagePicker} />
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.validateWineAddition() ? this.sendWineAdditionRequest() : null
                         }}>
@@ -123,6 +148,7 @@ class AddWine extends React.Component {
                                 <Text style={styles.buttonText}>Add a wine</Text>
                             </View>
                         </TouchableOpacity>
+                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 200 }} />
                     </>
                 )}
             </View>
