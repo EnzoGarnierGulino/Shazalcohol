@@ -4,6 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import {BarCodeScanner} from "expo-barcode-scanner";
 import {Icon} from "react-native-elements";
 import {launchImageLibraryAsync} from "expo-image-picker";
+import {manipulateAsync} from 'expo-image-manipulator';
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -17,6 +18,7 @@ class AddWine extends React.Component {
             barcode: '',
             scanned: false,
             selectedImage: null,
+            base64ImageData: null,
         };
     }
 
@@ -34,11 +36,26 @@ class AddWine extends React.Component {
             if (response.canceled) {
                 console.log('User cancelled image picker');
             } else {
-                this.setState({ selectedImage: response.assets[0].uri });
-                console.log('Image selected: ', response.assets[0].uri)
+                if (response.assets[0].hasOwnProperty('uri')) {
+                    const manipulateResult = await manipulateAsync(
+                        response.assets[0].uri,
+                        [{ resize: { width: 500} }],
+                        {
+                            compress: 0.2,
+                            base64: true,
+                            format: 'png',
+                        }
+                    );
+
+                    // Get the Base64 encoded image data
+                    this.setState({ base64ImageData: manipulateResult.base64 });
+                    this.setState({ selectedImage: manipulateResult.uri });
+                    console.log('Image selected: ', manipulateResult.uri);
+                }
             }
         } catch (error) {
             console.log('Error selecting image: ', error);
+            alert('Error selecting image: ', error);
         }
     };
 
@@ -57,6 +74,7 @@ class AddWine extends React.Component {
                     origin: this.state.origin,
                     price: this.state.price,
                     barcode: this.state.barcode,
+                    image: this.state.base64ImageData,
                 }),
             });
             if (response.ok) {
@@ -69,6 +87,7 @@ class AddWine extends React.Component {
             }
         } catch (error) {
             console.error('Error fetching data:', error);
+            alert('Error fetching data:', error);
         }
     };
 
@@ -84,6 +103,10 @@ class AddWine extends React.Component {
         }
         if (this.state.year.length !== 4) {
             alert('Year must be 4 digits long');
+            return false;
+        }
+        if (this.state.base64ImageData === null) {
+            alert('Please select an image');
             return false;
         }
         return true;
