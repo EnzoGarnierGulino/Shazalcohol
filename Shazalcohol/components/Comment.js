@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Comment = ({ author, text, date }) => {
+const Comment = ({ author, text, date, note }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -9,7 +9,7 @@ const Comment = ({ author, text, date }) => {
                 <Text style={styles.date}>{date}</Text>
             </View>
             <Text style={styles.text}>{text}</Text>
-            <Text style={styles.text}>Note : 5/20</Text>
+            <Text style={styles.text}>Note : {note}/20</Text>
         </View>
     );
 };

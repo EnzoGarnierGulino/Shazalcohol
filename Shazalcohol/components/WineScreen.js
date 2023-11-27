@@ -1,21 +1,28 @@
 import React from 'react';
-import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
+import comment from "./Comment";
 
 class WineScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isAdmin: this.props.route.params.isAdmin,
+            isConnected: this.props.route.params.isConnected,
             name: this.props.route.params.wine.name,
             year: this.props.route.params.wine.year,
             type: this.props.route.params.wine.type,
+            comment: '',
+            note: '',
+            comments: [],
+            averageNote: '',
         };
     }
 
     componentDidMount() {
         this.fetchWines();
+        this.fetchComments();
     }
 
     fetchWines = async () => {
@@ -33,7 +40,27 @@ class WineScreen extends React.Component {
                 this.setState({
                     origin: bodyData.origin,
                     price: bodyData.price.toString(),
+                    averageNote: bodyData.note,
                 });
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    fetchComments = async () => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/getComments?wineId=' + this.props.route.params.wine.id, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                const bodyData = JSON.parse(responseData[0].body);
+                this.setState({comments: bodyData.comments});
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -93,17 +120,53 @@ class WineScreen extends React.Component {
         }
     };
 
+    sendComment = async () => {
+        if (this.state.note === '') {
+            alert('Please fill the review field');
+            return false;
+        }
+        if (this.state.note < 0 || this.state.note > 20) {
+            alert('Review must be between 0 and 20');
+            return false;
+        }
+        try {
+            const response = await fetch('http://82.66.48.233:42690/postComment', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    note: this.state.note.toString(),
+                    comment: this.state.comment,
+                    wineId: this.props.route.params.wine.id,
+                    userid: this.props.route.params.userId.toString(),
+                    username: this.props.route.params.username,
+                }),
+            });
+            if (response.ok) {
+                alert('Comment successfully added!');
+                this.componentDidMount();
+            } else {
+                const responseData = await response.json();
+                const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';
+                alert(`Comment addition failed (Error code: ${response.status})\nReason: ${reason}\nPlease try again.`);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     getCircleColor(note) {
         if (note < 5) {
-            return 'red';
+            return '#da4545';
         }
         if (note < 10) {
             return 'orange';
         }
         if (note < 15) {
             return '#FFD700';
-        }
-        else {
+        } else {
             return '#1d9a1d';
         }
     }
@@ -144,38 +207,95 @@ class WineScreen extends React.Component {
                     ) : (
                         <React.Fragment>
                             <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
-                            <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin}</Text>
+                            <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price +'€)'}</Text>
                             <Image style={styles.img} source={require('../images/Wine1.png')}></Image>
-                            <Text style={styles.text}>{this.state.price}€</Text>
                             <View style={{marginBottom: 20}}/>
-                            <Text style={styles.text}>Average user rating</Text>
-                            <View style={{marginBottom: 5}}/>
-                            <View style={styles.container}>
-                                <View style={[styles.circle, { backgroundColor: this.getCircleColor(8) }]} />
-                                <Text style={styles.review}>8</Text>
-                            </View>
+                            {this.state.averageNote === 99 ? (
+                                <Text style={styles.text}>No reviews yet</Text>
+                            ) : (
+                                <>
+                                    <Text style={styles.text}>Average user rating</Text>
+                                    <View style={{marginBottom: 5}}/>
+                                    <View style={styles.container}>
+                                        <View style={[styles.circle, {backgroundColor: this.getCircleColor(this.state.averageNote)}]}/>
+                                        <Text style={styles.review}>{this.state.averageNote}</Text>
+                                    </View>
+                                </>
+                            )}
                         </React.Fragment>
                     )}
                 </React.Fragment>
                 <View style={{marginBottom: 20}}/>
-                {/* TODO: Scrollable view */}
-                <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"} />
-                <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                {this.state.isConnected ? (
+                    <>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Did you like this wine? Tell us why!"
+                                onChangeText={(comment) => this.setState({ comment })}
+                                value={this.state.comment}
+                            />
+                            <TextInput
+                                style={styles.ratingInput}
+                                placeholder="Review (0 to 20)"
+                                keyboardType="numeric"
+                                onChangeText={(note) => this.setState({ note })}
+                                value={this.state.note}
+                            />
+                        </View>
+                        <TouchableOpacity style={styles.button} onPress={() => this.sendComment()}>
+                            <View style={styles.buttonContainer}>
+                                <Icon name={"add"} color="white" size={20} style={styles.icon}/>
+                                <Text style={styles.buttonText}>Add a review</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </>
+                ) : (
+                    <>
+                        <Text style={styles.text}>You must be connected to add a review</Text>
+                    </>
+                )}
+                <View style={{marginBottom: 20}}/>
+                <ScrollView contentContainerStyle={styles.container}>
+                    <View style={{marginBottom: '130%'}}>
+                        {this.state.comments.map((comment, index) => (
+                            <Comment key={index} author={comment.username} text={comment.comment} date={comment.date} note={comment.note}/>
+                        ))}
+                    </View>
+                </ScrollView>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
     input: {
         height: 40,
-        width: '60%',
+        width: '68%',
         borderColor: 'grey',
         borderWidth: 1,
-        marginBottom: 10,
         paddingLeft: 10,
         backgroundColor: 'white',
-        alignSelf: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 10,
+    },
+    ratingInput: {
+        height: 40,
+        width: '27%',
+        borderColor: 'grey',
+        borderWidth: 1,
+        paddingLeft: 10,
+        backgroundColor: 'white',
+        marginTop: 10,
+        marginBottom: 10,
+        marginRight: 10,
     },
     button: {
         width: '50%',

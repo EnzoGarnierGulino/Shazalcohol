@@ -7,7 +7,6 @@ class HomePage extends React.Component {
         super(props);
         this.state = {
             isAdmin: false,
-            isConnected: false,
         };
     }
 
@@ -20,12 +19,11 @@ class HomePage extends React.Component {
                 </View>
             </TouchableOpacity>
         );
-
         return (
             <>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>Welcome to Shazalcohol 🍇</Text>
-                    {this.props.route.params?.username ? (
+                    {this.props.route.params?.isConnected ? (
                         <Text style={styles.text}>{ '✨ ' + this.props.route.params.username + ' ✨'}</Text>
                     ) : null }
                 </View>
@@ -39,7 +37,12 @@ class HomePage extends React.Component {
                         this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin})
                     )}
                     {renderButton('See the wines', 'local-bar', () =>
-                        this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin})
+                        this.props.navigation.navigate('WineList', {
+                            isAdmin: this.state.isAdmin,
+                            isConnected: this.props.route.params?.isConnected,
+                            username: this.props.route.params?.username,
+                            userId: this.props.route.params?.userId,
+                        })
                     )}
                     {this.state.isAdmin &&
                         renderButton('Switch to user mode', 'person', () => this.setState({isAdmin: false}))}
