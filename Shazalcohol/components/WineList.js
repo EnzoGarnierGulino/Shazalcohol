@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Button, TouchableOpacity, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 
 class WineList extends React.Component {
@@ -54,7 +54,6 @@ class WineList extends React.Component {
             });
         }
     }
-
     render() {
         const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
             this.state.wines.map((wine, index) => (
@@ -64,6 +63,8 @@ class WineList extends React.Component {
                             wine: wine,
                             isAdmin: this.props.route.params.isAdmin,
                             isConnected: this.props.route.params.isConnected,
+                            username: this.props.route.params.username,
+                            userId: this.props.route.params.userId,
                         })}>
 
                         <Card>
