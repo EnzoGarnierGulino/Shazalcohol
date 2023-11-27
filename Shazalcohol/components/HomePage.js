@@ -39,7 +39,7 @@ class HomePage extends React.Component {
                         this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin})
                     )}
                     {renderButton('See the wines', 'local-bar', () =>
-                        this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin})
+                        this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin, isConnected: this.state.isConnected})
                     )}
                     {this.state.isAdmin &&
                         renderButton('Switch to user mode', 'person', () => this.setState({isAdmin: false}))}

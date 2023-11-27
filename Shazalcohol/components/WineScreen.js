@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
 
@@ -11,6 +11,7 @@ class WineScreen extends React.Component {
             name: this.props.route.params.wine.name,
             year: this.props.route.params.wine.year,
             type: this.props.route.params.wine.type,
+            isConnected: this.props.route.params.isConnected,
         };
     }
 
@@ -157,10 +158,23 @@ class WineScreen extends React.Component {
                         </React.Fragment>
                     )}
                 </React.Fragment>
-                <View style={{marginBottom: 20}}/>
-                {/* TODO: Scrollable view */}
-                <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"} />
-                <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                <ScrollView contentContainerStyle={styles.container}>
+                    <View style={{marginBottom: 400}}>
+                        <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"}/>
+                        <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+
+                        <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"} />
+                        <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                        <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"}/>
+                        <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                        <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"}/>
+                        <Comment author={"Enzo"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                        <Comment author={"Jules"} text={"Nul"} date={"25/11/2023, 10:28"}/>
+                        <Comment author={"feur"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                        <Comment author={"dada"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                        <Comment author={"oknda"} text={"Bof"} date={"26/11/2023, 14:54"}/>
+                    </View>
+                </ScrollView>
             </View>
         );
     }

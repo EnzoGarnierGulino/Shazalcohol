@@ -8,7 +8,7 @@ class WineList extends React.Component {
         this.state = {
             wines: [],
             offset: 0,
-            winesPerPage: 5,
+            winesPerPage: 10,
         };
     }
 
@@ -62,7 +62,8 @@ class WineList extends React.Component {
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('WineScreen', {
                             wine: wine,
-                            isAdmin: this.props.route.params.isAdmin
+                            isAdmin: this.props.route.params.isAdmin,
+                            isConnected: this.props.route.params.isConnected,
                         })}>
 
                         <Card>
