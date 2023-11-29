@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
-import {Card, Icon} from 'react-native-elements';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
+import { Card } from 'react-native-elements';
 
 class WineList extends React.Component {
     constructor(props) {
@@ -8,8 +8,7 @@ class WineList extends React.Component {
         this.state = {
             wines: [],
             offset: 0,
-            winesPerPage: 10,
-            search: '',
+            winesPerPage: 5,
         };
     }
 
@@ -19,8 +18,7 @@ class WineList extends React.Component {
 
     fetchWines = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' +
-                this.state.offset + '&winesPerPage=' + this.state.winesPerPage + '&search=' + this.state.search, {
+            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' + this.state.offset + '&winesPerPage=' + this.state.winesPerPage, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -30,27 +28,7 @@ class WineList extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
-                this.setState({wines: bodyData.wines});
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-
-    searchWines = async () => {
-        try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?search=' + this.state.search, {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            });
-            console.log(this.state.search)
-            if (response.ok) {
-                const responseData = await response.json();
-                const bodyData = JSON.parse(responseData[0].body);
-                this.setState({wines: bodyData.wines});
+                this.setState({ wines: bodyData.wines });
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -58,8 +36,11 @@ class WineList extends React.Component {
     }
 
     previousPage = () => {
-        if (this.state.offset !== 0) {
-            this.setState({offset: this.state.offset - this.state.winesPerPage}, () => {
+        if (this.state.offset === 0) {
+            return;
+        }
+        else {
+            this.setState({ offset: this.state.offset - this.state.winesPerPage }, () => {
                 this.fetchWines();
             });
         }
@@ -68,90 +49,65 @@ class WineList extends React.Component {
     nextPage = () => {
         if (this.state.wines.length < this.state.winesPerPage) {
             return;
-        } else {
-            this.setState({offset: this.state.offset + this.state.winesPerPage}, () => {
+        }
+        else {
+            this.setState({ offset: this.state.offset + this.state.winesPerPage }, () => {
                 this.fetchWines();
             });
         }
     }
+
     render() {
         const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
             this.state.wines.map((wine, index) => (
-                <View key={index} style={{width: '90%'}}>
+                <View key={index} style={{ width: '90%' }}>
                     <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('WineScreen', {
-                            wine: wine,
-                            isAdmin: this.props.route.params.isAdmin,
-                            isConnected: this.props.route.params.isConnected,
-                            username: this.props.route.params.username,
-                            userId: this.props.route.params.userId,
-                        })}>
-
+                        onPress={() => this.props.navigation.navigate('WineScreen', { wine })}>
                         <Card>
                             <Card.Title>{wine.name + ' (' + wine.year + ')'}</Card.Title>
-                            <Card.Divider/>
+                            <Card.Divider />
                             <Text>{wine.type}</Text>
                         </Card>
                     </TouchableOpacity>
                 </View>
             ))
         ) : null;
+
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={styles.container}>
                     {this.props.route.params.isAdmin && (
                         <View>
-                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine')}>
-                                <View style={styles.buttonContainer}>
-                                    <Icon name={"add"} color="white" size={20} style={styles.icon}/>
-                                    <Text style={styles.buttonText}>Add a wine</Text>
-                                </View>
-                            </TouchableOpacity>
+                            <Button
+                                title="Add a wine"
+                                onPress={() => this.props.navigation.navigate('AddWine')}
+                            />
                         </View>
                     )}
-                    <View style={{marginBottom: 10}}/>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Search wines"
-                        onChangeText={(search) => {
-                            this.setState({ search }, () => {
-                                if (this.state.search.length >= 2) {
-                                    this.searchWines();
-                                }
-                            });
-                        }}
-                        value={this.state.search}
-                    />
-                    <TouchableOpacity style={styles.button} onPress={() => this.searchWines()}>
-                        <View style={styles.buttonContainer}>
-                            <Icon name={"search"} color="white" size={20} style={styles.icon}/>
-                            <Text style={styles.buttonText}>Search wines</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View style={{ marginBottom: 10 }} />
                     {wineCards}
                 </ScrollView>
                 <View style={styles.bottomBar}>
-                    <TouchableOpacity style={styles.button} onPress={() => {
-                        this.previousPage();
-                    }}>
-                        <View style={styles.buttonContainer}>
-                            <Icon name={"navigate-before"} color="white" size={20} style={styles.icon}/>
-                            <Text style={styles.buttonText}>Previous</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => {
-                        this.nextPage();
-                    }}>
-                        <View style={styles.buttonContainer}>
-                            <Icon name={"navigate-next"} color="white" size={20} style={styles.icon}/>
-                            <Text style={styles.buttonText}>Next</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <Button
+                        title="Previous"
+                        onPress={() => {
+                            this.previousPage();
+                        }
+                        }
+                    />
+                    <Button
+                        title="Next"
+                        onPress={() => {
+                            this.nextPage();
+                        }
+                        }
+                    />
                 </View>
             </View>
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -171,43 +127,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         textAlign: 'center',
-    },
-    button: {
-        backgroundColor: 'black',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: 100,
-        justifyContent: 'center',
-    },
-    icon: {
-        marginRight: 8,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-    },
-    input: {
-        height: 40,
-        width: '80%',
-        borderColor: 'grey',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingLeft: 10,
-        backgroundColor: 'white',
-    },
-    searchButton: {
-        backgroundColor: 'black',
-        padding: 10,
-        borderRadius: 5,
-    },
-    searchButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
     },
 });
 
