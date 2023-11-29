@@ -28,7 +28,6 @@ class ConnexionPage extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 if (responseData.response === "true") {
-                    alert('You successfully logged in, congrats !');
                     const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
                     const userId = responseData && responseData.id ? responseData.id : 'Unknown id';
                     await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted, userId: userId});

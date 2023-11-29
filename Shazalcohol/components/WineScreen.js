@@ -17,6 +17,7 @@ class WineScreen extends React.Component {
             note: '',
             comments: [],
             averageNote: '',
+            selectedImage: null,
         };
     }
 
@@ -42,6 +43,25 @@ class WineScreen extends React.Component {
                     price: bodyData.price.toString(),
                     averageNote: bodyData.note,
                 });
+                try {
+                    const response = await fetch('http://82.66.48.233:42690/getImageBase64/' + this.props.route.params.wine.id, {
+                        method: 'GET',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        const bodyData = JSON.parse(responseData[0].body);
+                        const base64ImageData = bodyData.image;
+                        this.setState({selectedImage: `data:image/png;base64,${base64ImageData}`});
+                    }
+                }
+                catch (error) {
+                    console.log('Error selecting image: ', error);
+                    alert('Error getting image', error);
+                }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -173,42 +193,46 @@ class WineScreen extends React.Component {
 
     render() {
         return (
-            <View>
+            <ScrollView contentContainerStyle={styles.container}>
                 <React.Fragment>
                     {this.state.isAdmin ? (
-                        <React.Fragment>
-                            <TextInput
-                                style={styles.input}
-                                value={this.state.name}
-                                onChangeText={(name) => this.setState({name: name})}
-                            />
-                            <TextInput
-                                style={styles.input}
-                                value={this.state.year.toString()}
-                                onChangeText={(year) => this.setState({year: year})}
-                            />
-                            <TextInput
-                                style={styles.input}
-                                value={this.state.origin}
-                                onChangeText={(origin) => this.setState({origin: origin})}
-                            />
-                            <TextInput
-                                style={styles.input}
-                                value={this.state.price}
-                                onChangeText={(price) => this.setState({price: price})}
-                            />
-                            <TouchableOpacity style={styles.button} onPress={() => this.sendModifiedWine()}>
-                                <View style={styles.buttonContainer}>
-                                    <Icon name={"edit"} color="white" size={20} style={styles.icon}/>
-                                    <Text style={styles.buttonText}>Edit wine</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </React.Fragment>
+                        <>
+                            <Image source={{ uri: this.state.selectedImage }}/>
+                            <React.Fragment>
+                                <TextInput
+                                    style={styles.input}
+                                    value={this.state.name}
+                                    onChangeText={(name) => this.setState({name: name})}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    value={this.state.year.toString()}
+                                    onChangeText={(year) => this.setState({year: year})}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    value={this.state.origin}
+                                    onChangeText={(origin) => this.setState({origin: origin})}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    value={this.state.price}
+                                    onChangeText={(price) => this.setState({price: price})}
+                                />
+                                <TouchableOpacity style={styles.button} onPress={() => this.sendModifiedWine()}>
+                                    <View style={styles.buttonContainer}>
+                                        <Icon name={"edit"} color="white" size={20} style={styles.icon}/>
+                                        <Text style={styles.buttonText}>Edit wine</Text>
+                                    </View>
+                                </TouchableOpacity>
+
+                            </React.Fragment>
+                        </>
                     ) : (
                         <React.Fragment>
                             <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
                             <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price +'€)'}</Text>
-                            <Image style={styles.img} source={require('../images/Wine1.png')}></Image>
+                            <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 600 }} />
                             <View style={{marginBottom: 20}}/>
                             {this.state.averageNote === 99 ? (
                                 <Text style={styles.text}>No reviews yet</Text>
@@ -255,15 +279,12 @@ class WineScreen extends React.Component {
                         <Text style={styles.text}>You must be connected to add a review</Text>
                     </>
                 )}
-                <View style={{marginBottom: 20}}/>
-                <ScrollView contentContainerStyle={styles.container}>
-                    <View style={{marginBottom: '130%'}}>
+
+
                         {this.state.comments.map((comment, index) => (
                             <Comment key={index} author={comment.username} text={comment.comment} date={comment.date} note={comment.note}/>
                         ))}
-                    </View>
-                </ScrollView>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -332,8 +353,8 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     circle: {
-        width: 50,
-        height: 50,
+        width: 90,
+        height: 55,
         borderRadius: 8,
         position: 'absolute',
         alignSelf: 'center',

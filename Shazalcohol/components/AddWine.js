@@ -78,8 +78,15 @@ class AddWine extends React.Component {
                 }),
             });
             if (response.ok) {
-                alert('Wine successfully added!');
-                await this.props.navigation.navigate('WineList', {isAdmin: true});
+                const responseData = await response.json();
+                const bodyData = JSON.parse(responseData[0].body);
+                if (bodyData.response === "false") {
+                    alert('Wine addition failed\nReason: Wine already exists\nPlease try again.');
+                }
+                else {
+                    alert('Wine successfully added!');
+                    await this.props.navigation.navigate('WineList', {isAdmin: true});
+                }
             } else {
                 const responseData = await response.json();
                 const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';
@@ -171,7 +178,7 @@ class AddWine extends React.Component {
                                 <Text style={styles.buttonText}>Add a wine</Text>
                             </View>
                         </TouchableOpacity>
-                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 200 }} />
+                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 600 }} />
                     </>
                 )}
             </View>
