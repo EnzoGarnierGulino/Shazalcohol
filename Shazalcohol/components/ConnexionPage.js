@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
-import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
 
 class ConnexionPage extends React.Component {
@@ -30,8 +29,7 @@ class ConnexionPage extends React.Component {
                 if (responseData.response === "true") {
                     alert('You successfully logged in, congrats !');
                     const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
-                    const userId = responseData && responseData.id ? responseData.id : 'Unknown id';
-                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted, userId: userId});
+                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted});
                 } else {
                         alert("Account connexion failed\nReason: Wrong username or password");
                 }
@@ -60,16 +58,15 @@ class ConnexionPage extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                     value={this.state.password}
                 />
-                <TouchableOpacity style={styles.button} onPress={() => {
-                    this.sendAccountConnexionRequest();
-                }}>
-                    <View style={styles.buttonContainer}>
-                        <Icon name={"login"} color="white" size={20} style={styles.icon}/>
-                        <Text style={styles.buttonText}>Connexion</Text>
-                    </View>
-                </TouchableOpacity>
+                <Button
+                    style={styles.button}
+                    title="Connexion"
+                    onPress={() => {
+                        this.sendAccountConnexionRequest();
+                    }}
+                />
                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('CreateAccountPage') }}>
-                    <Text style={styles.createAccountText}>No account? Click here</Text>
+                    <Text style={styles.createAccountText}>Don't have an account? Click here</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -94,26 +91,7 @@ const styles = StyleSheet.create({
     },
     createAccountText: {
         marginTop: 10,
-        color: 'blue',
-    },
-    button: {
-        backgroundColor: 'black',
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: 200,
-        justifyContent: 'center',
-    },
-    icon: {
-        marginRight: 8,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
+        color: 'blue', // You can adjust the color
     },
 });
 
