@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
 

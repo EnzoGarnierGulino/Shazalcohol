@@ -2,7 +2,6 @@ import React from 'react';
 import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
-import comment from "./Comment";
 
 class WineScreen extends React.Component {
     constructor(props) {

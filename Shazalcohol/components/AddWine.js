@@ -23,7 +23,6 @@ class AddWine extends React.Component {
     }
 
     openImagePicker = async () => {
-        console.log('Opening image picker...')
         const options = {
             mediaType: 'photo',
             includeBase64: false,
@@ -50,11 +49,9 @@ class AddWine extends React.Component {
                     // Get the Base64 encoded image data
                     this.setState({ base64ImageData: manipulateResult.base64 });
                     this.setState({ selectedImage: manipulateResult.uri });
-                    console.log('Image selected: ', manipulateResult.uri);
                 }
             }
         } catch (error) {
-            console.log('Error selecting image: ', error);
             alert('Error selecting image: ', error);
         }
     };
@@ -93,7 +90,6 @@ class AddWine extends React.Component {
                 alert(`Wine addition failed (Error code: ${response.status})\nReason: ${reason}\nPlease try again.`);
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
             alert('Error fetching data:', error);
         }
     };
@@ -178,7 +174,7 @@ class AddWine extends React.Component {
                                 <Text style={styles.buttonText}>Add a wine</Text>
                             </View>
                         </TouchableOpacity>
-                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 600 }} />
+                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 100, height: 300 }} />
                     </>
                 )}
             </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
+import {Picker} from "@react-native-picker/picker";
 
 class WineList extends React.Component {
     constructor(props) {
@@ -10,6 +11,8 @@ class WineList extends React.Component {
             offset: 0,
             winesPerPage: 10,
             search: '',
+            noMoreWines: 0,
+            type: 'all',
         };
     }
 
@@ -20,7 +23,8 @@ class WineList extends React.Component {
     fetchWines = async () => {
         try {
             const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' +
-                this.state.offset + '&winesPerPage=' + this.state.winesPerPage + '&search=' + this.state.search, {
+                this.state.offset + '&winesPerPage=' + this.state.winesPerPage + '&search=' + this.state.search +
+                '&filter=' + this.state.type, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -30,27 +34,12 @@ class WineList extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
-                this.setState({wines: bodyData.wines});
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-
-    searchWines = async () => {
-        try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?search=' + this.state.search, {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
+                if (!bodyData.wines.length) {
+                    this.setState({wines: []});
+                    this.setState({noMoreWines: this.state.search.length});
+                } else {
+                    this.setState({wines: bodyData.wines});
                 }
-            });
-            console.log(this.state.search)
-            if (response.ok) {
-                const responseData = await response.json();
-                const bodyData = JSON.parse(responseData[0].body);
-                this.setState({wines: bodyData.wines});
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -66,16 +55,15 @@ class WineList extends React.Component {
     }
 
     nextPage = () => {
-        if (this.state.wines.length < this.state.winesPerPage) {
-            return;
-        } else {
+        if (this.state.wines.length >= this.state.winesPerPage) {
             this.setState({offset: this.state.offset + this.state.winesPerPage}, () => {
                 this.fetchWines();
             });
         }
     }
+
     render() {
-        const wineCards = this.state.wines && Array.isArray(this.state.wines) ? (
+        const wineCards = this.state.wines.length > 0 ? (
             this.state.wines.map((wine, index) => (
                 <View key={index} style={{width: '90%'}}>
                     <TouchableOpacity
@@ -86,7 +74,6 @@ class WineList extends React.Component {
                             username: this.props.route.params.username,
                             userId: this.props.route.params.userId,
                         })}>
-
                         <Card>
                             <Card.Title>{wine.name + ' (' + wine.year + ')'}</Card.Title>
                             <Card.Divider/>
@@ -95,7 +82,7 @@ class WineList extends React.Component {
                     </TouchableOpacity>
                 </View>
             ))
-        ) : null;
+        ) : <Text>There is no wine matching your research 😞</Text>;
         return (
             <View style={{flex: 1}}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -115,19 +102,32 @@ class WineList extends React.Component {
                         placeholder="Search wines"
                         onChangeText={(search) => {
                             this.setState({ search }, () => {
-                                if (this.state.search.length >= 2) {
-                                    this.searchWines();
+                                if (this.state.noMoreWines !== 0 && this.state.search.length >= this.state.noMoreWines) {
+                                    this.state.wines = [];
+                                    return;
+                                } else if (this.state.noMoreWines !== 0) {
+                                    this.setState({ noMoreWines: 0 });
                                 }
+                                this.setState({ offset: 0 });
+                                this.fetchWines();
                             });
                         }}
                         value={this.state.search}
                     />
-                    <TouchableOpacity style={styles.button} onPress={() => this.searchWines()}>
-                        <View style={styles.buttonContainer}>
-                            <Icon name={"search"} color="white" size={20} style={styles.icon}/>
-                            <Text style={styles.buttonText}>Search wines</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <Picker
+                        style={{ height: 50, width: 150, borderColor: 'grey', borderWidth: 1 }}
+                        itemStyle={{ color: "black"}}
+                        selectedValue={this.state.type}
+                        onValueChange={(itemValue, itemIndex) => {
+                            this.setState({ type: itemValue }, () => {
+                                this.fetchWines();
+                            });
+                        }}>
+                        <Picker.Item label="All" value="all" />
+                        <Picker.Item label="Red" value="Red" />
+                        <Picker.Item label="White" value="White" />
+                        <Picker.Item label="Rose" value="Rose" />
+                    </Picker>
                     {wineCards}
                 </ScrollView>
                 <View style={styles.bottomBar}>
