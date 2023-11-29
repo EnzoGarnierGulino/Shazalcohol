@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 
 class WineList extends React.Component {
@@ -9,6 +9,7 @@ class WineList extends React.Component {
             wines: [],
             offset: 0,
             winesPerPage: 10,
+            search: '',
         };
     }
 
@@ -18,7 +19,8 @@ class WineList extends React.Component {
 
     fetchWines = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' + this.state.offset + '&winesPerPage=' + this.state.winesPerPage, {
+            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' +
+                this.state.offset + '&winesPerPage=' + this.state.winesPerPage + '&search=' + this.state.search, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -35,10 +37,28 @@ class WineList extends React.Component {
         }
     }
 
+    searchWines = async () => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/getAllWines?search=' + this.state.search, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log(this.state.search)
+            if (response.ok) {
+                const responseData = await response.json();
+                const bodyData = JSON.parse(responseData[0].body);
+                this.setState({wines: bodyData.wines});
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     previousPage = () => {
-        if (this.state.offset === 0) {
-            return;
-        } else {
+        if (this.state.offset !== 0) {
             this.setState({offset: this.state.offset - this.state.winesPerPage}, () => {
                 this.fetchWines();
             });
@@ -76,7 +96,6 @@ class WineList extends React.Component {
                 </View>
             ))
         ) : null;
-
         return (
             <View style={{flex: 1}}>
                 <ScrollView contentContainerStyle={styles.container}>
@@ -91,6 +110,24 @@ class WineList extends React.Component {
                         </View>
                     )}
                     <View style={{marginBottom: 10}}/>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Search wines"
+                        onChangeText={(search) => {
+                            this.setState({ search }, () => {
+                                if (this.state.search.length >= 2) {
+                                    this.searchWines();
+                                }
+                            });
+                        }}
+                        value={this.state.search}
+                    />
+                    <TouchableOpacity style={styles.button} onPress={() => this.searchWines()}>
+                        <View style={styles.buttonContainer}>
+                            <Icon name={"search"} color="white" size={20} style={styles.icon}/>
+                            <Text style={styles.buttonText}>Search wines</Text>
+                        </View>
+                    </TouchableOpacity>
                     {wineCards}
                 </ScrollView>
                 <View style={styles.bottomBar}>
@@ -153,6 +190,24 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
+    },
+    input: {
+        height: 40,
+        width: '80%',
+        borderColor: 'grey',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingLeft: 10,
+        backgroundColor: 'white',
+    },
+    searchButton: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 5,
+    },
+    searchButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 
