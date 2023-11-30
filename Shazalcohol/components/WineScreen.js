@@ -56,8 +56,7 @@ class WineScreen extends React.Component {
                         const base64ImageData = bodyData.image;
                         this.setState({selectedImage: `data:image/png;base64,${base64ImageData}`});
                     }
-                }
-                catch (error) {
+                } catch (error) {
                     console.log('Error selecting image: ', error);
                     alert('Error getting image', error);
                 }
@@ -176,6 +175,27 @@ class WineScreen extends React.Component {
         }
     };
 
+    deleteWine = async () => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/deleteWine', {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wineId: this.props.route.params.wine.id,
+                })
+            });
+            if (response.ok) {
+                alert('Wine successfully deleted!');
+                await this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin});
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     getCircleColor(note) {
         if (note < 5) {
             return '#da4545';
@@ -196,7 +216,7 @@ class WineScreen extends React.Component {
                 <React.Fragment>
                     {this.state.isAdmin ? (
                         <>
-                            <Image source={{ uri: this.state.selectedImage }}/>
+                            <Image source={{uri: this.state.selectedImage}}/>
                             <React.Fragment>
                                 <TextInput
                                     style={styles.input}
@@ -224,14 +244,20 @@ class WineScreen extends React.Component {
                                         <Text style={styles.buttonText}>Edit wine</Text>
                                     </View>
                                 </TouchableOpacity>
-
+                                <TouchableOpacity style={styles.button} onPress={() => this.deleteWine()}>
+                                    <View style={styles.buttonContainer}>
+                                        <Icon name={"delete"} color="white" size={20} style={styles.icon}/>
+                                        <Text style={styles.buttonText}>Delete wine</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </React.Fragment>
                         </>
                     ) : (
                         <React.Fragment>
                             <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
-                            <Text style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price +'€)'}</Text>
-                            <Image source={{ uri: this.state.selectedImage }} style={{ width: 200, height: 600 }} />
+                            <Text
+                                style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price + '€)'}</Text>
+                            <Image source={{uri: this.state.selectedImage}} style={{width: 200, height: 600}}/>
                             <View style={{marginBottom: 20}}/>
                             {this.state.averageNote === 99 ? (
                                 <Text style={styles.text}>No reviews yet</Text>
@@ -240,7 +266,8 @@ class WineScreen extends React.Component {
                                     <Text style={styles.text}>Average user rating</Text>
                                     <View style={{marginBottom: 5}}/>
                                     <View style={styles.container}>
-                                        <View style={[styles.circle, {backgroundColor: this.getCircleColor(this.state.averageNote)}]}/>
+                                        <View
+                                            style={[styles.circle, {backgroundColor: this.getCircleColor(this.state.averageNote)}]}/>
                                         <Text style={styles.review}>{this.state.averageNote}</Text>
                                     </View>
                                 </>
@@ -255,14 +282,14 @@ class WineScreen extends React.Component {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Did you like this wine? Tell us why!"
-                                onChangeText={(comment) => this.setState({ comment })}
+                                onChangeText={(comment) => this.setState({comment})}
                                 value={this.state.comment}
                             />
                             <TextInput
                                 style={styles.ratingInput}
                                 placeholder="Review (0 to 20)"
                                 keyboardType="numeric"
-                                onChangeText={(note) => this.setState({ note })}
+                                onChangeText={(note) => this.setState({note})}
                                 value={this.state.note}
                             />
                         </View>
@@ -278,11 +305,10 @@ class WineScreen extends React.Component {
                         <Text style={styles.text}>You must be connected to add a review</Text>
                     </>
                 )}
-
-
-                        {this.state.comments.map((comment, index) => (
-                            <Comment key={index} author={comment.username} text={comment.comment} date={comment.date} note={comment.note}/>
-                        ))}
+                {this.state.comments.map((comment, index) => (
+                    <Comment key={index} author={comment.username} text={comment.comment} date={comment.date}
+                             note={comment.note}/>
+                ))}
             </ScrollView>
         );
     }
