@@ -34,6 +34,9 @@ class WineList extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
+                if (!bodyData.wines.length && this.state.offset !== 0) {
+                    return;
+                }
                 if (!bodyData.wines.length) {
                     this.setState({wines: []});
                     this.setState({noMoreWines: this.state.search.length});

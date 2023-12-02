@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
+import WineList from "./WineList";
 
 class WineScreen extends React.Component {
     constructor(props) {
@@ -184,12 +185,12 @@ class WineScreen extends React.Component {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    wineId: this.props.route.params.wine.id,
+                    id: this.props.route.params.wine.id,
                 })
             });
             if (response.ok) {
                 alert('Wine successfully deleted!');
-                await this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin});
+                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin});
             }
         } catch (error) {
             console.error('Error fetching data:', error);
