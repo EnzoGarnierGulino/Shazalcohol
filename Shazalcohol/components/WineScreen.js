@@ -2,7 +2,6 @@ import React from 'react';
 import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
-import WineList from "./WineList";
 
 class WineScreen extends React.Component {
     constructor(props) {
@@ -15,6 +14,9 @@ class WineScreen extends React.Component {
             type: this.props.route.params.wine.type,
             comment: '',
             note: '',
+            editedComment: '',
+            editedNote: '',
+            userReview: '',
             comments: [],
             averageNote: '',
             selectedImage: null,
@@ -59,7 +61,6 @@ class WineScreen extends React.Component {
                     }
                 } catch (error) {
                     console.log('Error selecting image: ', error);
-                    alert('Error getting image', error);
                 }
             }
         } catch (error) {
@@ -80,6 +81,12 @@ class WineScreen extends React.Component {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
                 this.setState({comments: bodyData.comments});
+                const userComment = this.state.comments.find(comment => comment.userId === this.props.route.params.userId);
+                if (userComment) {
+                    this.setState({userReview: userComment});
+                    this.setState({editedComment: userComment.comment});
+                    this.setState({editedNote: userComment.note.toString()});
+                }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -126,6 +133,7 @@ class WineScreen extends React.Component {
                     id: this.props.route.params.wine.id,
                 }),
             });
+            console.log(response)
             if (response.ok) {
                 alert('Wine successfully modified!');
                 await this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin});
@@ -197,6 +205,61 @@ class WineScreen extends React.Component {
         }
     }
 
+    editComment = async (commentId) => {
+        if (this.state.editedNote === '') {
+            alert('Please fill the review field');
+            return false;
+        }
+        if (this.state.editedNote < 0 || this.state.editedNote > 20) {
+            alert('Review must be between 0 and 20');
+            return false;
+        }
+        try {
+            const response = await fetch('http://82.66.48.233:42690/editComment', {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: commentId,
+                    userId: this.props.route.params.userId,
+                    comment: this.state.editedComment,
+                    note: this.state.editedNote,
+                })
+            });
+            if (response.ok) {
+                alert('Comment successfully edited!');
+                this.componentDidMount();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    deleteComment = async (commentId) => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/deleteComment', {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                        id: commentId,
+                    }
+                )
+            });
+            if (response.ok) {
+                alert('Comment successfully deleted!');
+                this.setState({userReview: ''})
+                this.componentDidMount();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     getCircleColor(note) {
         if (note < 5) {
             return '#da4545';
@@ -258,13 +321,14 @@ class WineScreen extends React.Component {
                             <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
                             <Text
                                 style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price + '€)'}</Text>
-                            <Image source={{uri: this.state.selectedImage}} style={{width: 200, height: 600}}/>
+                            <Image source={{uri: this.state.selectedImage}}
+                                   style={{width: 200, height: 500, resizeMode: 'contain'}}/>
                             <View style={{marginBottom: 20}}/>
                             {this.state.averageNote === 99 ? (
                                 <Text style={styles.text}>No reviews yet</Text>
                             ) : (
                                 <>
-                                    <Text style={styles.text}>Average user rating</Text>
+                                    <Text style={styles.text}>Average user rating /20</Text>
                                     <View style={{marginBottom: 5}}/>
                                     <View style={styles.container}>
                                         <View
@@ -278,40 +342,93 @@ class WineScreen extends React.Component {
                 </React.Fragment>
                 <View style={{marginBottom: 20}}/>
                 {this.state.isConnected ? (
-                    <>
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Did you like this wine? Tell us why!"
-                                onChangeText={(comment) => this.setState({comment})}
-                                value={this.state.comment}
-                            />
-                            <TextInput
-                                style={styles.ratingInput}
-                                placeholder="Review (0 to 20)"
-                                keyboardType="numeric"
-                                onChangeText={(note) => this.setState({note})}
-                                value={this.state.note}
-                            />
-                        </View>
-                        <TouchableOpacity style={styles.button} onPress={() => this.sendComment()}>
-                            <View style={styles.buttonContainer}>
-                                <Icon name={"add"} color="white" size={20} style={styles.icon}/>
-                                <Text style={styles.buttonText}>Add a review</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </>
-                ) : (
-                    <>
+                        <>
+                            {this.state.userReview ? (
+                                <>
+                                    <Text style={styles.text}>Your review</Text>
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Did you like this wine? Tell us why!"
+                                            onChangeText={(editedComment) => this.setState({editedComment})}
+                                            value={this.state.editedComment}
+                                        />
+                                        <TextInput
+                                            style={styles.ratingInput}
+                                            placeholder="Review (0 to 20)"
+                                            keyboardType="numeric"
+                                            onChangeText={(editedNote) => this.setState({editedNote})}
+                                            value={this.state.editedNote}
+                                        />
+                                    </View>
+                                    <TouchableOpacity style={styles.button}
+                                                      onPress={() => this.editComment(this.state.userReview.commentId)}>
+                                        <View style={styles.buttonContainer}>
+                                            <Icon name={"edit"} color="white" size={20} style={styles.icon}/>
+                                            <Text style={styles.buttonText}>Edit your review</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.button}
+                                                      onPress={() => this.deleteComment(this.state.userReview.commentId)}>
+                                        <View style={styles.buttonContainer}>
+                                            <Icon name={"delete"} color="white" size={20} style={styles.icon}/>
+                                            <Text style={styles.buttonText}>Delete your review</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </>
+                            ) : (
+                                <>
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Did you like this wine? Tell us why!"
+                                            onChangeText={(comment) => this.setState({comment})}
+                                            value={this.state.comment}
+                                        />
+                                        <TextInput
+                                            style={styles.ratingInput}
+                                            placeholder="Review (0 to 20)"
+                                            keyboardType="numeric"
+                                            onChangeText={(note) => this.setState({note})}
+                                            value={this.state.note}
+                                        />
+                                    </View>
+                                    <TouchableOpacity style={styles.button} onPress={() => this.sendComment()}>
+                                        <View style={styles.buttonContainer}>
+                                            <Icon name={"add"} color="white" size={20} style={styles.icon}/>
+                                            <Text style={styles.buttonText}>Add a review</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                        </>
+                    )
+                    :
+                    (
                         <Text style={styles.text}>You must be connected to add a review</Text>
-                    </>
-                )}
-                {this.state.comments.map((comment, index) => (
-                    <Comment key={index} author={comment.username} text={comment.comment} date={comment.date}
-                             note={comment.note}/>
-                ))}
+                    )
+                }
+
+                {/* Display other user reviews */
+                }
+                <Text style={styles.text}>Users reviews</Text>
+                {
+                    this.state.comments.map((comment, index) => (
+                        <React.Fragment key={index}>
+                            <Comment
+                                author={comment.username}
+                                text={comment.comment}
+                                date={comment.date}
+                                note={comment.note}
+                                authorId={comment.userId}
+                                commentId={comment.commentId}
+                            />
+                        </React.Fragment>
+                    ))
+                }
             </ScrollView>
-        );
+        )
+            ;
     }
 }
 
