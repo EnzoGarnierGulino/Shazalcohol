@@ -30,7 +30,8 @@ class ConnexionPage extends React.Component {
                 if (responseData.response === "true") {
                     const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
                     const userId = responseData && responseData.id ? responseData.id : 'Unknown id';
-                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted, userId: userId});
+                    const isAdmin = responseData && responseData.isAdmin ? responseData.isAdmin : false;
+                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted, userId: userId, isAdmin: isAdmin});
                 } else {
                         alert("Account connexion failed\nReason: Wrong username or password");
                 }

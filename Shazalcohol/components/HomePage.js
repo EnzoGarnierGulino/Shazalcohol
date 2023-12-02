@@ -5,9 +5,6 @@ import { Icon } from 'react-native-elements';
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            isAdmin: false,
-        };
     }
 
     render() {
@@ -34,25 +31,20 @@ class HomePage extends React.Component {
                         )
                     )}
                     {renderButton('Take a picture', 'camera-alt', () =>
-                        this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin, isConnected: this.props.route.params?.isConnected, userId: this.props.route.params?.userId})
+                        this.props.navigation.navigate('Scanner', {isAdmin: this.props.route.params?.isAdmin, isConnected: this.props.route.params?.isConnected, userId: this.props.route.params?.userId})
                     )}
                     {renderButton('See the wines', 'local-bar', () =>
                         this.props.navigation.navigate('WineList', {
-                            isAdmin: this.state.isAdmin,
+                            isAdmin: this.props.route.params?.isAdmin,
                             isConnected: this.props.route.params?.isConnected,
                             username: this.props.route.params?.username,
                             userId: this.props.route.params?.userId,
                         })
                     )}
-                    {this.state.isAdmin &&
-                        renderButton('Switch to user mode', 'person', () => this.setState({isAdmin: false}))}
-                    {!this.state.isAdmin &&
-                        renderButton('Switch to admin mode', 'shield', () => this.setState({isAdmin: true}))}
                     {this.props.route.params?.isConnected ? <>
                         {renderButton('Logout', 'logout', () =>
                             this.props.navigation.navigate('HomePage', {
                                 isConnected: false,
-                                isAdmin: false,
                             })
                         )}
                     </> : null}
