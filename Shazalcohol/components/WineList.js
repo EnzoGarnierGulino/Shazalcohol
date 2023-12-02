@@ -9,7 +9,7 @@ class WineList extends React.Component {
         this.state = {
             wines: [],
             offset: 0,
-            winesPerPage: 10,
+            winesPerPage: 5,
             search: '',
             noMoreWines: 0,
             type: 'all',
@@ -35,7 +35,7 @@ class WineList extends React.Component {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
                 if (!bodyData.wines.length && this.state.offset !== 0) {
-                    return;
+                    return false;
                 }
                 if (!bodyData.wines.length) {
                     this.setState({wines: []});
@@ -43,6 +43,7 @@ class WineList extends React.Component {
                 } else {
                     this.setState({wines: bodyData.wines});
                 }
+                return true;
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -60,7 +61,11 @@ class WineList extends React.Component {
     nextPage = () => {
         if (this.state.wines.length >= this.state.winesPerPage) {
             this.setState({offset: this.state.offset + this.state.winesPerPage}, () => {
-                this.fetchWines();
+                this.fetchWines().then(r => {
+                    if (!r) {
+                        this.setState({offset: this.state.offset - this.state.winesPerPage});
+                    }
+                });
             });
         }
     }

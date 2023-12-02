@@ -34,7 +34,7 @@ class HomePage extends React.Component {
                         )
                     )}
                     {renderButton('Take a picture', 'camera-alt', () =>
-                        this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin})
+                        this.props.navigation.navigate('Scanner', {isAdmin: this.state.isAdmin, isConnected: this.props.route.params?.isConnected, userId: this.props.route.params?.userId})
                     )}
                     {renderButton('See the wines', 'local-bar', () =>
                         this.props.navigation.navigate('WineList', {
