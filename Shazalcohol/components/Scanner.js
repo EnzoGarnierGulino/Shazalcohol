@@ -7,6 +7,7 @@ function Scanner(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const isAdmin = props.route.params.isAdmin;
+    const isConnected = props.route.params.isConnected;
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -35,7 +36,7 @@ function Scanner(props) {
                         name: responseData.name,
                         year: responseData.year
                     }
-                    await props.navigation.navigate('WineScreen', {wine: wine, isAdmin: isAdmin});
+                    await props.navigation.navigate('WineScreen', {wine: wine, isAdmin: isAdmin, isConnected: isConnected, userId: props.route.params?.userId});
                 }
                 else {
                     alert('This wine is not in the database!');
