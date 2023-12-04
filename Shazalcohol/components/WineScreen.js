@@ -131,6 +131,8 @@ class WineScreen extends React.Component {
                     origin: this.state.origin,
                     price: this.state.price,
                     id: this.props.route.params.wine.id,
+                    username: this.props.route.params.username,
+                    hashpass: this.props.route.params.hashpass
                 }),
             });
             console.log(response)
@@ -169,6 +171,7 @@ class WineScreen extends React.Component {
                     wineId: this.props.route.params.wine.id,
                     userid: this.props.route.params.userId.toString(),
                     username: this.props.route.params.username,
+                    hashpass: this.props.route.params.hashpass
                 }),
             });
             if (response.ok) {
@@ -194,6 +197,8 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     id: this.props.route.params.wine.id,
+                    username: this.props.route.params.username,
+                    hashpass: this.props.route.params.hashpass
                 })
             });
             if (response.ok) {
@@ -226,6 +231,8 @@ class WineScreen extends React.Component {
                     userId: this.props.route.params.userId,
                     comment: this.state.editedComment,
                     note: this.state.editedNote,
+                    username: this.props.route.params.username,
+                    hashpass: this.props.route.params.hashpass
                 })
             });
             if (response.ok) {
@@ -247,6 +254,8 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                         id: commentId,
+                        username: this.props.route.params.username,
+                        hashpass: this.props.route.params.hashpass
                     }
                 )
             });

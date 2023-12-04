@@ -39,6 +39,7 @@ class HomePage extends React.Component {
                             isConnected: this.props.route.params?.isConnected,
                             username: this.props.route.params?.username,
                             userId: this.props.route.params?.userId,
+                            hashpass: this.props.route.params?.hashpass,
                         })
                     )}
                     {this.props.route.params?.isConnected ? <>
