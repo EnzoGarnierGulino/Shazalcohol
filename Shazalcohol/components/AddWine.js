@@ -72,6 +72,9 @@ class AddWine extends React.Component {
                     price: this.state.price,
                     barcode: this.state.barcode,
                     image: this.state.base64ImageData,
+                    username: this.props.route.params?.username,
+                    userId: this.props.route.params?.userId.toString(),
+                    hashpass: this.props.route.params?.hashpass,
                 }),
             });
             if (response.ok) {
