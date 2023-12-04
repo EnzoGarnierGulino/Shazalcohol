@@ -97,7 +97,11 @@ class WineList extends React.Component {
                 <ScrollView contentContainerStyle={styles.container}>
                     {this.props.route.params.isAdmin && (
                         <View>
-                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine')}>
+                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine', {
+                                username: this.props.route.params.username,
+                                userId: this.props.route.params.userId,
+                                hashpass: this.props.route.params.hashpass,
+                            })}>
                                 <View style={styles.buttonContainer}>
                                     <Icon name={"add"} color="white" size={20} style={styles.icon}/>
                                     <Text style={styles.buttonText}>Add a wine</Text>
