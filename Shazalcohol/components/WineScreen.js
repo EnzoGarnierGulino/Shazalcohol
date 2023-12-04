@@ -404,15 +404,8 @@ class WineScreen extends React.Component {
                         </>
                     )
                     :
-                    (
-                        <Text style={styles.text}>You must be connected to add a review</Text>
-                    )
-                }
-
-                {/* Display other user reviews */
-                }
-                <Text style={styles.text}>Users reviews</Text>
-                {
+                    (<Text style={styles.text}>You must be connected to add a review</Text>)
+                }{
                     this.state.comments.map((comment, index) => (
                         <React.Fragment key={index}>
                             <Comment
@@ -427,8 +420,7 @@ class WineScreen extends React.Component {
                     ))
                 }
             </ScrollView>
-        )
-            ;
+        );
     }
 }
 
