@@ -1,10 +1,18 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG, setIsConnectedG} from "../App.js";
+import {fontSize} from "nativewind/dist/tailwind/native/font-size";
 
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
+        this.props.navigation.addListener('focus', () => {
+            this.forceUpdate();
+        });
     }
 
     render() {
@@ -22,33 +30,27 @@ class HomePage extends React.Component {
             <>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>Welcome to Shazalcohol 🍇</Text>
-                    {this.props.route.params?.isConnected ? (
-                        <Text style={styles.text}>{ '✨ ' + this.props.route.params.username + ' ✨'}</Text>
+                    {isConnectedG ? (
+                        <Text style={styles.text}>{ '✨ ' + usernameG + ' ✨'}</Text>
                     ) : null }
                 </View>
                 <View style={styles.container}>
-                    {this.props.route.params?.isConnected ? null : (
+                    {isConnectedG ? null : (
                         renderButton('Connect to your account', 'account-circle', () =>
                             this.props.navigation.navigate('ConnexionPage')
                         )
                     )}
                     {renderButton('Scan a barcode', 'camera-alt', () =>
-                        this.props.navigation.navigate('Scanner', {isAdmin: this.props.route.params?.isAdmin, isConnected: this.props.route.params?.isConnected, userId: this.props.route.params?.userId})
+                        this.props.navigation.navigate('Scanner')
                     )}
                     {renderButton('See the wines', 'local-bar', () =>
-                        this.props.navigation.navigate('WineList', {
-                            isAdmin: this.props.route.params?.isAdmin,
-                            isConnected: this.props.route.params?.isConnected,
-                            username: this.props.route.params?.username,
-                            userId: this.props.route.params?.userId,
-                            hashpass: this.props.route.params?.hashpass,
-                        })
+                        this.props.navigation.navigate('WineList')
                     )}
-                    {this.props.route.params?.isConnected ? <>
-                        {renderButton('Logout', 'logout', () =>
-                            this.props.navigation.navigate('HomePage', {
-                                isConnected: false,
-                            })
+                    {isConnectedG ? <>
+                        {renderButton('Logout', 'logout', () => {
+                            setIsConnectedG(false);
+                            this.forceUpdate();
+                        }
                         )}
                     </> : null}
                 </View>

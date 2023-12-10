@@ -2,14 +2,14 @@ import React from 'react';
 import {Image, View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Icon} from "react-native-elements";
 import Comment from "./Comment";
-import {serverIP} from "../App.js";
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG} from "../App.js";
 
 class WineScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAdmin: this.props.route.params.isAdmin,
-            isConnected: this.props.route.params.isConnected,
+            isAdmin: isAdminG,
+            isConnected: isConnectedG,
             name: this.props.route.params.wine.name,
             year: this.props.route.params.wine.year,
             type: this.props.route.params.wine.type,
@@ -82,7 +82,7 @@ class WineScreen extends React.Component {
                 const responseData = await response.json();
                 const bodyData = JSON.parse(responseData[0].body);
                 this.setState({comments: bodyData.comments});
-                const userComment = this.state.comments.find(comment => comment.userId === this.props.route.params.userId);
+                const userComment = this.state.comments.find(comment => comment.userId === userIdG);
                 if (userComment) {
                     this.setState({userReview: userComment});
                     this.setState({editedComment: userComment.comment});
@@ -132,14 +132,14 @@ class WineScreen extends React.Component {
                     origin: this.state.origin,
                     price: this.state.price,
                     id: this.props.route.params.wine.id,
-                    userId: this.props.route.params.userId.toString(),
-                    username: this.props.route.params.username,
-                    hashpass: this.props.route.params.hashpass
+                    userId: userIdG.toString(),
+                    username: usernameG,
+                    hashpass: hashpassG
                 }),
             });
             if (response.ok) {
                 alert('Wine successfully modified!');
-                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin, userId: this.props.route.params.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass});
+                await this.props.navigation.navigate('HomePage');
             } else {
                 const responseData = await response.json();
                 const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';
@@ -170,9 +170,9 @@ class WineScreen extends React.Component {
                     note: this.state.note.toString(),
                     comment: this.state.comment,
                     wineId: this.props.route.params.wine.id,
-                    userid: this.props.route.params.userId.toString(),
-                    username: this.props.route.params.username,
-                    hashpass: this.props.route.params.hashpass
+                    userid: userIdG.toString(),
+                    username: usernameG,
+                    hashpass: hashpassG
                 }),
             });
             if (response.ok) {
@@ -198,14 +198,14 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     id: this.props.route.params.wine.id,
-                    username: this.props.route.params.username,
-                    hashpass: this.props.route.params.hashpass,
-                    userId: this.props.route.params.userId.toString()
+                    username: usernameG,
+                    hashpass: hashpassG,
+                    userId: userIdG.toString()
                 })
             });
             if (response.ok) {
                 alert('Wine successfully deleted!');
-                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin, userId: this.props.route.params.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass});
+                await this.props.navigation.navigate('WineList');
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -230,11 +230,11 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     id: commentId,
-                    userId: this.props.route.params.userId,
+                    userId: userIdG,
                     comment: this.state.editedComment,
                     note: this.state.editedNote,
-                    username: this.props.route.params.username,
-                    hashpass: this.props.route.params.hashpass
+                    username: usernameG,
+                    hashpass: hashpassG
                 })
             });
             if (response.ok) {
@@ -256,9 +256,9 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                         id: commentId,
-                        username: this.props.route.params.username,
-                        hashpass: this.props.route.params.hashpass,
-                        userId: this.props.route.params.userId.toString()
+                        username: usernameG,
+                        hashpass: hashpassG,
+                        userId: userIdG.toString()
                     }
                 )
             });
@@ -282,9 +282,9 @@ class WineScreen extends React.Component {
                 },
                 body: JSON.stringify({
                         id: commentId,
-                        username: this.props.route.params.username,
-                        userId: this.props.route.params.userId,
-                        hashpass: this.props.route.params.hashpass
+                        username: usernameG,
+                        userId: userIdG,
+                        hashpass: hashpassG
                     }
                 )
             });
