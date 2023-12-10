@@ -280,6 +280,7 @@ class WineScreen extends React.Component {
                 body: JSON.stringify({
                         id: commentId,
                         username: this.props.route.params.username,
+                        userId: this.props.route.params.userId,
                         hashpass: this.props.route.params.hashpass
                     }
                 )
