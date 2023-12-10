@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
+import {serverIP} from "../App.js";
 
 class ConnexionPage extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class ConnexionPage extends React.Component {
 
     sendAccountConnexionRequest = async url => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/login', {
+            const response = await fetch(serverIP + 'http://82.66.48.233:42690/login', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

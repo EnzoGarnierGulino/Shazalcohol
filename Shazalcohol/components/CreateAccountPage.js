@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, TextInput, Text, TouchableOpacity} from 'react-native';
 import {Icon} from "react-native-elements";
+import {serverIP} from "../App.js";
 const SHA256 = require("crypto-js/sha256");
 
 class CreateAccountPage extends React.Component {
@@ -18,7 +19,7 @@ class CreateAccountPage extends React.Component {
 
     sendAccountCreationRequest = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/createAccount', {
+            const response = await fetch(serverIP + 'createAccount', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

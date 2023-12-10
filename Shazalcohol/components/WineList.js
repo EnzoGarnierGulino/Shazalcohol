@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 import {Picker} from "@react-native-picker/picker";
+import {serverIP} from "../App.js";
 
 class WineList extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class WineList extends React.Component {
 
     fetchWines = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/getAllWines?offset=' +
+            const response = await fetch(serverIP + 'http://82.66.48.233:42690/getAllWines?offset=' +
                 this.state.offset + '&winesPerPage=' + this.state.winesPerPage + '&search=' + this.state.search +
                 '&filter=' + this.state.type, {
                 method: 'GET',

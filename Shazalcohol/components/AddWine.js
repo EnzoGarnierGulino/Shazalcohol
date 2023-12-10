@@ -5,6 +5,7 @@ import {BarCodeScanner} from "expo-barcode-scanner";
 import {Icon} from "react-native-elements";
 import {launchImageLibraryAsync} from "expo-image-picker";
 import {manipulateAsync} from 'expo-image-manipulator';
+import {serverIP} from "../App.js";
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -58,7 +59,7 @@ class AddWine extends React.Component {
 
     sendWineAdditionRequest = async () => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/addWine', {
+            const response = await fetch(serverIP + 'http://82.66.48.233:42690/addWine', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

@@ -7,10 +7,10 @@ import WineScreen from "./components/WineScreen";
 import AddWine from "./components/AddWine";
 import CreateAccountPage from "./components/CreateAccountPage";
 import Scanner from "./components/Scanner";
-import TestRequest from "./components/TestRequest";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+export const serverIP = "http://82.66.48.233:42690/";
 const Stack = createStackNavigator();
 
 class App extends React.Component {
@@ -45,10 +45,6 @@ class App extends React.Component {
                     <Stack.Screen
                         name="WineScreen"
                         component={WineScreen}
-                    />
-                    <Stack.Screen
-                        name="TestRequest"
-                        component={TestRequest}
                     />
                 </Stack.Navigator>
             </NavigationContainer>
