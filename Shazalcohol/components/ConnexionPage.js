@@ -1,6 +1,8 @@
 import React from 'react';
-import { Button, StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG, setIsConnectedG, setIsAdminG, setUserIdG, setUsernameG, setHashpassG} from "../App.js";
 
 class ConnexionPage extends React.Component {
     constructor(props) {
@@ -13,7 +15,7 @@ class ConnexionPage extends React.Component {
 
     sendAccountConnexionRequest = async url => {
         try {
-            const response = await fetch('http://82.66.48.233:42690/login', {
+            const response = await fetch(serverIP + 'login', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -27,9 +29,16 @@ class ConnexionPage extends React.Component {
             if (response.ok) {
                 const responseData = await response.json();
                 if (responseData.response === "true") {
-                    alert('You successfully logged in, congrats !');
-                    const usernameFormatted = responseData && responseData.username ? responseData.username : 'Unknown reason';
-                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted});
+                    const usernameFormatted = responseData && responseData.username ? responseData.username : 'Error';
+                    const userId = responseData && responseData.id ? responseData.id : 'Unknown id';
+                    const isAdmin = responseData && responseData.isAdmin ? responseData.isAdmin : false;
+                    const hashpass = SHA256(this.state.password).toString();
+                    setIsConnectedG(true);
+                    setIsAdminG(isAdmin);
+                    setUserIdG(userId);
+                    setUsernameG(usernameFormatted);
+                    setHashpassG(hashpass);
+                    await this.props.navigation.navigate('HomePage');
                 } else {
                         alert("Account connexion failed\nReason: Wrong username or password");
                 }
@@ -58,15 +67,16 @@ class ConnexionPage extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                     value={this.state.password}
                 />
-                <Button
-                    style={styles.button}
-                    title="Connexion"
-                    onPress={() => {
-                        this.sendAccountConnexionRequest();
-                    }}
-                />
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    this.sendAccountConnexionRequest();
+                }}>
+                    <View style={styles.buttonContainer}>
+                        <Icon name={"login"} color="white" size={20} style={styles.icon}/>
+                        <Text style={styles.buttonText}>Connexion</Text>
+                    </View>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('CreateAccountPage') }}>
-                    <Text style={styles.createAccountText}>Don't have an account? Click here</Text>
+                    <Text style={styles.createAccountText}>No account? Click here</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -91,7 +101,26 @@ const styles = StyleSheet.create({
     },
     createAccountText: {
         marginTop: 10,
-        color: 'blue', // You can adjust the color
+        color: 'blue',
+    },
+    button: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 200,
+        justifyContent: 'center',
+    },
+    icon: {
+        marginRight: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 
