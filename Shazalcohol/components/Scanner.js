@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import {useFocusEffect} from "@react-navigation/native";
+import {serverIP} from "../App.js";
 
 function Scanner(props) {
     const [hasPermission, setHasPermission] = useState(null);
@@ -21,7 +21,7 @@ function Scanner(props) {
     const handleBarCodeScanned = async ({type, data}) => {
         setScanned(true);
         try {
-            const response = await fetch('http://82.66.48.233:42690/getWineByBarcode?barcode=' + data, {
+            const response = await fetch(serverIP + 'getWineByBarcode?barcode=' + data, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',

@@ -60,7 +60,7 @@ class AddWine extends React.Component {
 
     sendWineAdditionRequest = async () => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/addWine', {
+            const response = await fetch(serverIP + 'addWine', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

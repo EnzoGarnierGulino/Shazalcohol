@@ -31,7 +31,7 @@ class WineScreen extends React.Component {
 
     fetchWines = async () => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/getWine?wineId=' + this.props.route.params.wine.id, {
+            const response = await fetch(serverIP + 'getWine?wineId=' + this.props.route.params.wine.id, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -47,7 +47,7 @@ class WineScreen extends React.Component {
                     averageNote: bodyData.note,
                 });
                 try {
-                    const response = await fetch(serverIP + 'http://82.66.48.233:42690/getImageBase64/' + this.props.route.params.wine.id, {
+                    const response = await fetch(serverIP + 'getImageBase64/' + this.props.route.params.wine.id, {
                         method: 'GET',
                         headers: {
                             Accept: 'application/json',
@@ -71,7 +71,7 @@ class WineScreen extends React.Component {
 
     fetchComments = async () => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/getComments?wineId=' + this.props.route.params.wine.id, {
+            const response = await fetch(serverIP + 'getComments?wineId=' + this.props.route.params.wine.id, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -120,7 +120,7 @@ class WineScreen extends React.Component {
             return false;
         }
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/editWine', {
+            const response = await fetch(serverIP + 'editWine', {
                 method: 'PUT',
                 headers: {
                     Accept: 'application/json',
@@ -161,7 +161,7 @@ class WineScreen extends React.Component {
             return false;
         }
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/postComment', {
+            const response = await fetch(serverIP + 'postComment', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -191,7 +191,7 @@ class WineScreen extends React.Component {
 
     deleteWine = async () => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/deleteWine', {
+            const response = await fetch(serverIP + 'deleteWine', {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',
@@ -223,7 +223,7 @@ class WineScreen extends React.Component {
             return false;
         }
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/editComment', {
+            const response = await fetch(serverIP + 'editComment', {
                 method: 'PUT',
                 headers: {
                     Accept: 'application/json',
@@ -249,7 +249,7 @@ class WineScreen extends React.Component {
 
     deleteComment = async (commentId) => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/deleteComment', {
+            const response = await fetch(serverIP + 'deleteComment', {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',
@@ -275,7 +275,7 @@ class WineScreen extends React.Component {
 
     deleteCommentAdmin = async (commentId) => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/deleteComment', {
+            const response = await fetch(serverIP + 'deleteComment', {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',

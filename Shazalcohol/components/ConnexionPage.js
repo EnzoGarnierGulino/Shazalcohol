@@ -15,7 +15,7 @@ class ConnexionPage extends React.Component {
 
     sendAccountConnexionRequest = async url => {
         try {
-            const response = await fetch(serverIP + 'http://82.66.48.233:42690/login', {
+            const response = await fetch(serverIP + 'login', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
