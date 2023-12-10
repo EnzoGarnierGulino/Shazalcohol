@@ -272,6 +272,31 @@ class WineScreen extends React.Component {
         }
     }
 
+    deleteCommentAdmin = async (commentId) => {
+        try {
+            const response = await fetch('http://82.66.48.233:42690/deleteComment', {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                        id: commentId,
+                        username: this.props.route.params.username,
+                        userId: this.props.route.params.userId,
+                        hashpass: this.props.route.params.hashpass
+                    }
+                )
+            });
+            if (response.ok) {
+                alert('Comment successfully deleted!');
+                this.componentDidMount();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     getCircleColor(note) {
         if (note < 5) {
             return '#da4545';
@@ -292,28 +317,33 @@ class WineScreen extends React.Component {
                 <React.Fragment>
                     {this.state.isAdmin ? (
                         <>
-                            <Image source={{uri: this.state.selectedImage}}/>
                             <React.Fragment>
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.input2}
                                     value={this.state.name}
                                     onChangeText={(name) => this.setState({name: name})}
                                 />
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.input2}
                                     value={this.state.year.toString()}
                                     onChangeText={(year) => this.setState({year: year})}
                                 />
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.input2}
                                     value={this.state.origin}
                                     onChangeText={(origin) => this.setState({origin: origin})}
                                 />
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.input2}
                                     value={this.state.price}
                                     onChangeText={(price) => this.setState({price: price})}
                                 />
+                                {this.state.selectedImage ? (
+                                    <>
+                                        <Image source={{uri: this.state.selectedImage}} style={styles.img}/>
+                                        <View style={{marginBottom: 20}}/>
+                                    </>
+                                ) : null}
                                 <TouchableOpacity style={styles.button} onPress={() => this.sendModifiedWine()}>
                                     <View style={styles.buttonContainer}>
                                         <Icon name={"edit"} color="white" size={20} style={styles.icon}/>
@@ -330,28 +360,47 @@ class WineScreen extends React.Component {
                         </>
                     ) : (
                         <React.Fragment>
-                            <Text style={styles.textTitle}>{this.state.name + ' (' + this.state.year + ')'}</Text>
-                            <Text
-                                style={styles.text}>{this.state.type + ' wine from ' + this.state.origin + ' (' + this.state.price + '€)'}</Text>
-                            <Image source={{uri: this.state.selectedImage}}
-                                   style={{width: 200, height: 500, resizeMode: 'contain'}}/>
+                            {this.state.selectedImage ? (
+                                <Image source={{uri: this.state.selectedImage}} style={styles.img}/>
+                            ) : null}
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name={"wine-bar"} color="black" size={25} style={{marginRight: 5}}/>
+                                <Text style={styles.textTitle}>{this.state.name}</Text>
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name={"date-range"} color="black" size={20} style={{marginRight: 5}}/>
+                                <Text style={styles.text2}>{this.state.year}</Text>
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name={"list"} color="black" size={20} style={{marginRight: 5}}/>
+                                <Text style={styles.text2}>{this.state.type}</Text>
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name={"location-pin"} color="black" size={20} style={{marginRight: 5}}/>
+                                <Text style={styles.text2}>{this.state.origin}</Text>
+                            </View>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name={"euro"} color="black" size={20} style={{marginRight: 5}}/>
+                                <Text style={styles.text2}>{this.state.price}</Text>
+                            </View>
+                            <View style={styles.horizontalLine}/>
                             <View style={{marginBottom: 20}}/>
                             {this.state.averageNote === 99 ? (
-                                <Text style={styles.text}>No reviews yet</Text>
+                                <Text style={styles.text}>No average note available</Text>
                             ) : (
                                 <>
-                                    <Text style={styles.text}>Average user rating /20</Text>
-                                    <View style={{marginBottom: 5}}/>
                                     <View style={styles.container}>
                                         <View
                                             style={[styles.circle, {backgroundColor: this.getCircleColor(this.state.averageNote)}]}/>
-                                        <Text style={styles.review}>{this.state.averageNote}</Text>
+                                        <Text style={styles.review}>{this.state.averageNote} / 20</Text>
                                     </View>
                                 </>
                             )}
                         </React.Fragment>
                     )}
                 </React.Fragment>
+                <View style={{marginBottom: 20}}/>
+                <View style={styles.horizontalLine}/>
                 <View style={{marginBottom: 20}}/>
                 {this.state.isConnected ? (
                         <>
@@ -416,21 +465,30 @@ class WineScreen extends React.Component {
                         </>
                     )
                     :
-                    (<Text style={styles.text}>You must be connected to add a review</Text>)
-                }{
-                    this.state.comments.map((comment, index) => (
-                        <React.Fragment key={index}>
-                            <Comment
-                                author={comment.username}
-                                text={comment.comment}
-                                date={comment.date}
-                                note={comment.note}
-                                authorId={comment.userId}
-                                commentId={comment.commentId}
-                            />
-                        </React.Fragment>
-                    ))
-                }
+                    (
+                        <>
+                            <Text style={styles.text}>You must be connected to add a review</Text>
+                            <View style={{marginBottom: 20}}/>
+                        </>
+                    )
+                }{this.state.comments.map((comment, index) => (
+                    <React.Fragment key={index}>
+                        <Comment
+                            author={comment.username}
+                            text={comment.comment}
+                            date={comment.date}
+                            note={comment.note}
+                            authorId={comment.userId}
+                            commentId={comment.commentId}
+                        />
+                        {this.state.isAdmin && (
+                            <TouchableOpacity onPress={() => this.deleteCommentAdmin(comment.commentId)}>
+                                <Text style={styles.delete}>Delete</Text>
+                            </TouchableOpacity>
+                        )}
+                    </React.Fragment>
+                ))
+            }
             </ScrollView>
         );
     }
@@ -453,6 +511,19 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         marginLeft: 10,
+        marginRight: 'auto',
+    },
+    input2: {
+        height: 40,
+        width: '68%',
+        borderColor: 'grey',
+        borderWidth: 1,
+        paddingLeft: 10,
+        backgroundColor: 'white',
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 'auto',
+        marginRight: 'auto',
     },
     ratingInput: {
         height: 40,
@@ -490,6 +561,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
     },
+    text2: {
+        fontSize: 25,
+        textAlign: 'center',
+    },
     textTitle: {
         fontSize: 30,
         textAlign: 'center',
@@ -500,16 +575,26 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     circle: {
-        width: 90,
+        width: 150,
         height: 55,
         borderRadius: 8,
         position: 'absolute',
         alignSelf: 'center',
     },
     img: {
-        width: 200,
-        height: 200,
+        width: '100%',
+        height: 500,
         alignSelf: 'center',
+    },
+    horizontalLine: {
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        marginVertical: 10,
+    },
+    delete: {
+        color: 'red',
+        textAlign: 'center',
+        fontSize: 20,
     }
 });
 
