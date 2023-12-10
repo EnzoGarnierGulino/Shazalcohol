@@ -87,7 +87,7 @@ class AddWine extends React.Component {
                 }
                 else {
                     alert('Wine successfully added!');
-                    await this.props.navigation.navigate('WineList', {isAdmin: true});
+                    await this.props.navigation.navigate('WineList', {isAdmin: true, userId: this.props.route.params?.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass, isConnected: this.props.route.params?.isConnected});
                 }
             } else {
                 const responseData = await response.json();
@@ -112,6 +112,10 @@ class AddWine extends React.Component {
         }
         if (this.state.year.length !== 4) {
             alert('Year must be 4 digits long');
+            return false;
+        }
+        if (this.state.year < 1800 || this.state.year > 2023) {
+            alert('Year must be between 1800 and 2023');
             return false;
         }
         if (this.state.base64ImageData === null) {
@@ -173,7 +177,14 @@ class AddWine extends React.Component {
                             onChangeText={(price) => this.setState({ price })}
                             value={this.state.price}
                         />
-                        <Button title="Choose from Device" onPress={this.openImagePicker} />
+                        <TouchableOpacity style={styles.button} onPress={() => {
+                            this.openImagePicker();
+                        }}>
+                            <View style={styles.buttonContainerLarge}>
+                                <Icon name={"photo-camera-back"} color="white" size={20} style={styles.icon}/>
+                                <Text style={styles.buttonText}>Choose an image</Text>
+                            </View>
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.button} onPress={() => {
                             this.validateWineAddition() ? this.sendWineAdditionRequest() : null
                         }}>
@@ -182,7 +193,7 @@ class AddWine extends React.Component {
                                 <Text style={styles.buttonText}>Add a wine</Text>
                             </View>
                         </TouchableOpacity>
-                        <Image source={{ uri: this.state.selectedImage }} style={{ width: 100, height: 300 }} />
+                        <Image source={{ uri: this.state.selectedImage }} style={styles.img} />
                     </>
                 )}
             </View>
@@ -222,6 +233,12 @@ const styles = StyleSheet.create({
         width: 100,
         justifyContent: 'center',
     },
+    buttonContainerLarge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 150,
+        justifyContent: 'center',
+    },
     icon: {
         marginRight: 8,
     },
@@ -229,6 +246,11 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
     },
+    img: {
+        width: '50%',
+        height: 250,
+        alignSelf: 'center',
+    }
 });
 
 export default AddWine;

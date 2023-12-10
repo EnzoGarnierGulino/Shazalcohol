@@ -137,10 +137,9 @@ class WineScreen extends React.Component {
                     hashpass: this.props.route.params.hashpass
                 }),
             });
-            console.log(response)
             if (response.ok) {
                 alert('Wine successfully modified!');
-                await this.props.navigation.navigate('WineList', {isAdmin: this.state.isAdmin});
+                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin, userId: this.props.route.params.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass});
             } else {
                 const responseData = await response.json();
                 const reason = responseData && responseData.reason ? responseData.reason : 'Unknown reason';
@@ -206,7 +205,7 @@ class WineScreen extends React.Component {
             });
             if (response.ok) {
                 alert('Wine successfully deleted!');
-                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin});
+                await this.props.navigation.navigate('HomePage', {isAdmin: this.state.isAdmin, userId: this.props.route.params.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass});
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -291,6 +290,9 @@ class WineScreen extends React.Component {
             });
             if (response.ok) {
                 alert('Comment successfully deleted!');
+                if (this.state.userReview.commentId === commentId) {
+                    this.setState({userReview: ''})
+                }
                 this.componentDidMount();
             }
         } catch (error) {

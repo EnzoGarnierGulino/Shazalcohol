@@ -34,7 +34,8 @@ function Scanner(props) {
                     const wine = {
                         id: responseData.id,
                         name: responseData.name,
-                        year: responseData.year
+                        year: responseData.year,
+                        type: responseData.type,
                     }
                     await props.navigation.navigate('WineScreen', {wine: wine, isAdmin: isAdmin, isConnected: isConnected, userId: props.route.params?.userId});
                 }

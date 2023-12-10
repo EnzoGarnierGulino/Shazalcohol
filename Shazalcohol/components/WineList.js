@@ -102,6 +102,7 @@ class WineList extends React.Component {
                     {this.props.route.params.isAdmin && (
                         <View>
                             <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine', {
+                                isConnected: this.props.route.params?.isConnected,
                                 username: this.props.route.params.username,
                                 userId: this.props.route.params.userId,
                                 hashpass: this.props.route.params.hashpass,
