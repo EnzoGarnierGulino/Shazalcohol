@@ -6,10 +6,13 @@ import {serverIP} from "../App.js";
 function Scanner(props) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const isAdmin = props.route.params.isAdmin;
-    const isConnected = props.route.params.isConnected;
+    const [refreshFlag, setRefreshFlag] = useState(false);
+
 
     useEffect(() => {
+        props.navigation.addListener('focus', () => {
+            setScanned(false);
+        });
         const getBarCodeScannerPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === 'granted');
@@ -37,7 +40,7 @@ function Scanner(props) {
                         year: responseData.year,
                         type: responseData.type,
                     }
-                    await props.navigation.navigate('WineScreen', {wine: wine, isAdmin: isAdmin, isConnected: isConnected, userId: props.route.params?.userId});
+                    await props.navigation.navigate('WineScreen', {wine: wine});
                 }
                 else {
                     alert('This wine is not in the database!');

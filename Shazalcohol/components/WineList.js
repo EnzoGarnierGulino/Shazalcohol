@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 import {Picker} from "@react-native-picker/picker";
-import {serverIP} from "../App.js";
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG} from "../App.js";
 
 class WineList extends React.Component {
     constructor(props) {
@@ -18,7 +18,9 @@ class WineList extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchWines();
+        this.props.navigation.addListener('focus', () => {
+            this.fetchWines();
+        });
     }
 
     // When the component is loaded or updated, we fetch the wines
@@ -81,11 +83,6 @@ class WineList extends React.Component {
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('WineScreen', {
                             wine: wine,
-                            isAdmin: this.props.route.params.isAdmin,
-                            isConnected: this.props.route.params.isConnected,
-                            username: this.props.route.params.username,
-                            userId: this.props.route.params.userId,
-                            hashpass: this.props.route.params.hashpass,
                         })}>
                         <Card>
                             <Card.Title>{wine.name + ' (' + wine.year + ')'}</Card.Title>
@@ -99,14 +96,9 @@ class WineList extends React.Component {
         return (
             <View style={{flex: 1}}>
                 <ScrollView contentContainerStyle={styles.container}>
-                    {this.props.route.params.isAdmin && (
+                    {isAdminG && (
                         <View>
-                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine', {
-                                isConnected: this.props.route.params?.isConnected,
-                                username: this.props.route.params.username,
-                                userId: this.props.route.params.userId,
-                                hashpass: this.props.route.params.hashpass,
-                            })}>
+                            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddWine')}>
                                 <View style={styles.buttonContainer}>
                                     <Icon name={"add"} color="white" size={20} style={styles.icon}/>
                                     <Text style={styles.buttonText}>Add a wine</Text>

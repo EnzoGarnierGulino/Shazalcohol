@@ -5,7 +5,7 @@ import {BarCodeScanner} from "expo-barcode-scanner";
 import {Icon} from "react-native-elements";
 import {launchImageLibraryAsync} from "expo-image-picker";
 import {manipulateAsync} from 'expo-image-manipulator';
-import {serverIP} from "../App.js";
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG} from "../App.js";
 
 class AddWine extends React.Component {
     constructor(props) {
@@ -74,9 +74,9 @@ class AddWine extends React.Component {
                     price: this.state.price,
                     barcode: this.state.barcode,
                     image: this.state.base64ImageData,
-                    username: this.props.route.params?.username,
-                    userId: this.props.route.params?.userId.toString(),
-                    hashpass: this.props.route.params?.hashpass,
+                    username: usernameG,
+                    userId: userIdG.toString(),
+                    hashpass: hashpassG,
                 }),
             });
             if (response.ok) {
@@ -87,7 +87,7 @@ class AddWine extends React.Component {
                 }
                 else {
                     alert('Wine successfully added!');
-                    await this.props.navigation.navigate('WineList', {isAdmin: true, userId: this.props.route.params?.userId, username: this.props.route.params.username, hashpass: this.props.route.params.hashpass, isConnected: this.props.route.params?.isConnected});
+                    await this.props.navigation.navigate('WineList');
                 }
             } else {
                 const responseData = await response.json();

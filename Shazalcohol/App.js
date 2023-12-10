@@ -12,6 +12,26 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // The IP address of the server
 export const serverIP = "http://82.66.48.233:42690/";
+export let isConnectedG = false;
+export function setIsConnectedG(value) {
+    isConnectedG = value;
+}
+export let isAdminG = false;
+export function setIsAdminG(value) {
+    isAdminG = value;
+}
+export let usernameG = '';
+export function setUsernameG(value) {
+    usernameG = value;
+}
+export let userIdG = -1;
+export function setUserIdG(value) {
+    userIdG = value;
+}
+export let hashpassG = '';
+export function setHashpassG(value) {
+    hashpassG = value;
+}
 // The stack allows us to navigate between pages
 const Stack = createStackNavigator();
 

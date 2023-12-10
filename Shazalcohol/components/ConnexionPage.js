@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import {Icon} from "react-native-elements";
 const SHA256 = require("crypto-js/sha256");
-import {serverIP} from "../App.js";
+import {serverIP, isConnectedG, isAdminG, userIdG, usernameG, hashpassG, setIsConnectedG, setIsAdminG, setUserIdG, setUsernameG, setHashpassG} from "../App.js";
 
 class ConnexionPage extends React.Component {
     constructor(props) {
@@ -33,7 +33,12 @@ class ConnexionPage extends React.Component {
                     const userId = responseData && responseData.id ? responseData.id : 'Unknown id';
                     const isAdmin = responseData && responseData.isAdmin ? responseData.isAdmin : false;
                     const hashpass = SHA256(this.state.password).toString();
-                    await this.props.navigation.navigate('HomePage', {isConnected: true, username: usernameFormatted, userId: userId, isAdmin: isAdmin, hashpass: hashpass});
+                    setIsConnectedG(true);
+                    setIsAdminG(isAdmin);
+                    setUserIdG(userId);
+                    setUsernameG(usernameFormatted);
+                    setHashpassG(hashpass);
+                    await this.props.navigation.navigate('HomePage');
                 } else {
                         alert("Account connexion failed\nReason: Wrong username or password");
                 }
