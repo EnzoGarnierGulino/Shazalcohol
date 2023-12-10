@@ -57,6 +57,7 @@ class AddWine extends React.Component {
         }
     };
 
+
     sendWineAdditionRequest = async () => {
         try {
             const response = await fetch(serverIP + 'http://82.66.48.233:42690/addWine', {
@@ -98,6 +99,7 @@ class AddWine extends React.Component {
         }
     };
 
+    // Check the inputs and send the request if they are valid
     validateWineAddition() {
         if (this.state.name === '' || this.state.year === '' || this.state.origin === ''
             || this.state.price === '' || this.state.barcode === '') {
@@ -126,6 +128,7 @@ class AddWine extends React.Component {
 
     render() {
         return (
+            // If the barcode has not been scanned yet, display the barcode scanner
             <View style={styles.container}>
                 {!this.state.scanned ? (
                     <BarCodeScanner
@@ -133,6 +136,7 @@ class AddWine extends React.Component {
                         style={StyleSheet.absoluteFillObject}
                     />
                 ) : (
+                    // If the barcode has been scanned, display the form
                     <>
                         <Picker
                             style={{ height: 50, width: 150, borderColor: 'grey', borderWidth: 1 }}

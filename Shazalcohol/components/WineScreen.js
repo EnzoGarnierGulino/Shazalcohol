@@ -298,6 +298,7 @@ class WineScreen extends React.Component {
         }
     }
 
+    // This function is used to get the color of the circle depending on the average note
     getCircleColor(note) {
         if (note < 5) {
             return '#da4545';
@@ -317,6 +318,7 @@ class WineScreen extends React.Component {
             <ScrollView contentContainerStyle={styles.container}>
                 <React.Fragment>
                     {this.state.isAdmin ? (
+                        // If the user is an admin, we display the wine information and the possibility to edit it
                         <>
                             <React.Fragment>
                                 <TextInput
@@ -360,6 +362,7 @@ class WineScreen extends React.Component {
                             </React.Fragment>
                         </>
                     ) : (
+                        // If the user is not an admin, we just display the wine information
                         <React.Fragment>
                             {this.state.selectedImage ? (
                                 <Image source={{uri: this.state.selectedImage}} style={styles.img}/>
@@ -404,6 +407,7 @@ class WineScreen extends React.Component {
                 <View style={styles.horizontalLine}/>
                 <View style={{marginBottom: 20}}/>
                 {this.state.isConnected ? (
+                    // Review handling and displaying
                         <>
                             {this.state.userReview ? (
                                 <>
@@ -464,9 +468,7 @@ class WineScreen extends React.Component {
                                 </>
                             )}
                         </>
-                    )
-                    :
-                    (
+                    ) : (
                         <>
                             <Text style={styles.text}>You must be connected to add a review</Text>
                             <View style={{marginBottom: 20}}/>

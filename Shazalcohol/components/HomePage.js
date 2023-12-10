@@ -8,6 +8,7 @@ class HomePage extends React.Component {
     }
 
     render() {
+        // Render a button with an icon and a title
         const renderButton = (title, iconName, onPress) => (
             <TouchableOpacity style={styles.button} onPress={onPress}>
                 <View style={styles.buttonContainer}>
@@ -17,6 +18,7 @@ class HomePage extends React.Component {
             </TouchableOpacity>
         );
         return (
+            // Depending on the state of the user, we display different buttons
             <>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>Welcome to Shazalcohol 🍇</Text>

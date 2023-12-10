@@ -21,6 +21,7 @@ class WineList extends React.Component {
         this.fetchWines();
     }
 
+    // When the component is loaded or updated, we fetch the wines
     fetchWines = async () => {
         try {
             const response = await fetch(serverIP + 'http://82.66.48.233:42690/getAllWines?offset=' +
@@ -51,6 +52,7 @@ class WineList extends React.Component {
         }
     }
 
+    // Page handling functions
     previousPage = () => {
         if (this.state.offset !== 0) {
             this.setState({offset: this.state.offset - this.state.winesPerPage}, () => {
@@ -72,6 +74,7 @@ class WineList extends React.Component {
     }
 
     render() {
+        // We map on the wines array to display them
         const wineCards = this.state.wines.length > 0 ? (
             this.state.wines.map((wine, index) => (
                 <View key={index} style={{width: '90%'}}>

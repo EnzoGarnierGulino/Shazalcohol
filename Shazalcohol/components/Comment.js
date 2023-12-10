@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+// This is the default comment component
 const Comment = ({ author, text, date, note, authorId, commentId }) => {
     return (
         <View style={styles.container}>

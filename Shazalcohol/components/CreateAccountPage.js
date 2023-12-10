@@ -47,6 +47,7 @@ class CreateAccountPage extends React.Component {
         }
     };
 
+    // Check the inputs and send the request if they are valid
     validateAccountCreation() {
         if (this.state.username === '' || this.state.password === '' || this.state.validationPassword === ''
             || this.state.firstName === '' || this.state.lastName === '' || this.state.mail === '') {
@@ -87,6 +88,7 @@ class CreateAccountPage extends React.Component {
 
     render() {
         return (
+            // All the inputs to create an account
             <View style={styles.container}>
                 <TextInput
                     style={styles.input}

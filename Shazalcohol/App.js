@@ -10,7 +10,9 @@ import Scanner from "./components/Scanner";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+// The IP address of the server
 export const serverIP = "http://82.66.48.233:42690/";
+// The stack allows us to navigate between pages
 const Stack = createStackNavigator();
 
 class App extends React.Component {
